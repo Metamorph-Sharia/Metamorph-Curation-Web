@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+/* Metamorph Curation: an internal console for the legal-data team. Calm, dense enough to work in, readable.
+   The first curation app's identity, kept: one accent (deep green), one radius (6px), light and dark from the
+   same tokens, following the system's preference. Type is Geist (loaded in app/layout.tsx). */
+
+:root {
+  color-scheme: light dark;
+  --bg: #f4f6f5;
+  --surface: #fbfcfb;
+  --sunken: #eaeeec;
+  --text: #17201b;
+  --muted: #4f5b55;
+  --border: #d6dcd8;
+  --border-strong: #aeb8b2;
+  --accent: #0c6a4c;
+  --accent-hover: #09553d;
+  --accent-soft: #dcefe6;
+  --on-accent: #f6fbf8;
+  --ok: #17663f;
+  --ok-soft: #dff1e6;
+  --warning: #7a4f00;
+  --warning-soft: #f8ebcc;
+  --critical: #a8251b;
+  --critical-soft: #f9e0dd;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #101412;
+    --surface: #161b18;
+    --sunken: #0c0f0e;
+    --text: #e4eae6;
+    --muted: #a2ada7;
+    --border: #2a332e;
+    --border-strong: #46524c;
+    --accent: #5bc497;
+    --accent-hover: #7fd6b1;
+    --accent-soft: #15372a;
+    --on-accent: #062018;
+    --ok: #74d29f;
+    --ok-soft: #173826;
+    --warning: #e8b85c;
+    --warning-soft: #3a2c0d;
+    --critical: #f28d84;
+    --critical-soft: #3d1714;
+  }
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-sunken: var(--sunken);
+  --color-text: var(--text);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-line-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-soft: var(--accent-soft);
+  --color-on-accent: var(--on-accent);
+  --color-ok: var(--ok);
+  --color-ok-soft: var(--ok-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-critical: var(--critical);
+  --color-critical-soft: var(--critical-soft);
+  --radius-ui: 6px;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, monospace;
+}
+
+@layer base {
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  ::selection {
+    background: var(--accent-soft);
+  }
+}
+
+/* A paged text's page markers, in the text editor: visibly kept as they are. */
+.cm-page-marker {
+  background: var(--warning-soft);
+  color: var(--warning);
+}

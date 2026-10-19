@@ -1,0 +1,63 @@
+# Checks on every push and pull request. Needs, in this repository's settings:
+#   variable PLATFORM_REPOSITORY   owner/Metamorph-Knowledge-Platform
+#   secret   PLATFORM_TOKEN        read access to it (the API's contract; the platform itself for the end-to-end world)
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.PLATFORM_REPOSITORY }}
+          token: ${{ secrets.PLATFORM_TOKEN }}
+          path: platform
+          sparse-checkout: docs/api
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: The API types match the platform's contract
+        run: npm run api:check
+        env:
+          METAMORPH_OPENAPI: platform/docs/api/openapi.json
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  e2e:
+    needs: checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+        with:
+          repository: ${{ vars.PLATFORM_REPOSITORY }}
+          token: ${{ secrets.PLATFORM_TOKEN }}
+          path: platform
+      # The e2e world (e2e/seed.sh, e2e/api.sh) runs the platform with uv, on the compose stack's database and store.
+      - name: PostgreSQL and the object store
+        run: docker compose -f platform/compose.yaml up -d --wait postgres objectstore
+      - uses: astral-sh/setup-uv@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e
+        env:
+          CI: "1"
+          METAMORPH_PLATFORM: platform
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
