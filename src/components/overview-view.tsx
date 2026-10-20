@@ -3,23 +3,25 @@ import Link from "next/link";
 import type { Dashboard } from "@/lib/api/types";
 import { formatCount, formatMoment } from "@/lib/format";
 import { reviewQueueLabel, sentence, severityLabel, severityTone } from "@/lib/labels";
+import { issuerLabel, searchHref } from "@/lib/search";
 
 import { Badge } from "./badge";
 import { Empty } from "./empty";
 import { Section } from "./section";
+import { CARD, LINK } from "./styles";
 import { Table } from "./table";
 
 // The overview, from the API's dashboard: what is held back, what waits for review, ingestion health, the
 // registry, the latest loads. Plain data in, markup out: the page fetches, this renders.
 export function OverviewView({ dashboard }: { dashboard: Dashboard }) {
   return (
-    <div className="grid gap-10">
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
+    <div className="grid gap-12">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <Held held={dashboard.held} stillPublished={dashboard.held_published} />
         <WaitingForReview queues={dashboard.open_reviews} />
       </div>
       <Health dashboard={dashboard} />
-      <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
         <Registry byIssuer={dashboard.documents_by_issuer} published={dashboard.published} />
         <LatestLoads bundles={dashboard.recent_bundles} />
       </div>
@@ -30,12 +32,12 @@ export function OverviewView({ dashboard }: { dashboard: Dashboard }) {
 function Held({ held, stillPublished }: { held: number; stillPublished: number }) {
   return (
     <Section id="held" title="Held Back from Publishing">
-      <div className="grid gap-2 rounded-ui border border-line bg-surface p-5">
-        <Link href="/held" className="w-fit font-mono text-4xl font-semibold tabular-nums tracking-tight text-accent underline-offset-4 hover:underline">
+      <div className={`${CARD} grid h-full content-start gap-3 p-5 sm:p-6`}>
+        <Link href="/held" className="w-fit rounded-ui font-heading text-6xl leading-none tabular-nums tracking-tight text-accent decoration-2 underline-offset-8 hover:underline">
           {formatCount(held)}
           <span className="sr-only"> held documents</span>
         </Link>
-        <p className="max-w-[60ch] text-sm text-muted">{stillPublishedNote(stillPublished)}</p>
+        <p className="max-w-[60ch] text-sm text-muted text-pretty">{stillPublishedNote(stillPublished)}</p>
       </div>
     </Section>
   );
@@ -52,12 +54,20 @@ function stillPublishedNote(count: number): string {
 function WaitingForReview({ queues }: { queues: Dashboard["open_reviews"] }) {
   return (
     <Section id="review" title="Waiting for Review">
-      <ul className="grid grid-cols-1 gap-px overflow-hidden rounded-ui border border-line bg-line sm:grid-cols-3">
+      <ul className="grid h-full grid-cols-1 gap-3 sm:grid-cols-3">
         {queues.map(([kind, open]) => (
-          <li key={kind} className="bg-surface">
-            <Link href={`/review?kind=${kind}`} className="grid h-full gap-1 p-5 transition-colors hover:bg-sunken">
-              <span className="text-sm text-muted">{reviewQueueLabel(kind)}</span>
-              <span className="font-mono text-2xl font-semibold tabular-nums">{formatCount(open)}</span>
+          <li key={kind}>
+            <Link
+              href={`/review?kind=${kind}`}
+              className={`${CARD} group grid h-full content-between gap-6 p-5 transition-colors hover:border-accent/40`}
+            >
+              <span className="text-sm text-muted transition-colors group-hover:text-text">{reviewQueueLabel(kind)}</span>
+              <span className="flex items-baseline justify-between gap-2">
+                <span className="font-heading text-4xl leading-none tabular-nums">{formatCount(open)}</span>
+                <span aria-hidden className="text-accent transition-transform group-hover:translate-x-0.5">
+                  →
+                </span>
+              </span>
             </Link>
           </li>
         ))}
@@ -106,8 +116,10 @@ function Registry({ byIssuer, published }: { byIssuer: Dashboard["documents_by_i
       <Table head={["Issuer", "Documents"]} numeric={[1]}>
         {byIssuer.map(([issuer, total]) => (
           <tr key={issuer}>
-            <td className="whitespace-nowrap font-mono" translate="no">
-              {issuer}
+            <td className="whitespace-nowrap">
+              <Link href={searchHref({}, { issuer: String(issuer) })} className={LINK}>
+                {issuerLabel(String(issuer))}
+              </Link>
             </td>
             <td className="text-right font-mono tabular-nums">{formatCount(total)}</td>
           </tr>

@@ -52,9 +52,9 @@ test("an approval without a reason is refused beside its form", async ({ page })
 test("search finds a document by its citation", async ({ page }) => {
   await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Documents" }).click();
   await page.getByRole("searchbox", { name: "Search" }).fill("35/POJK.05/2018");
-  await page.getByRole("button", { name: "Search" }).click();
+  await page.getByRole("button", { name: "Search", exact: true }).click();
 
-  await page.getByRole("link", { name: PUBLISHED.id }).click();
+  await page.getByRole("list", { name: "Matching documents" }).getByRole("link", { name: PUBLISHED.citation, exact: true }).click();
 
   await expect(page.getByRole("heading", { level: 1, name: PUBLISHED.citation })).toBeVisible();
   await expect(page.getByRole("main").locator("header").getByText("Published", { exact: true })).toBeVisible();
@@ -95,5 +95,6 @@ test("an open citation is linked to the document it means, by hand", async ({ pa
 
   await expect(page.getByRole("status").filter({ hasText: "Citation linked." })).toBeVisible();
   await expect(citations.getByText("Every citation of this document is linked.")).toBeVisible();
-  await expect(page.getByRole("region", { name: "Links" }).getByRole("link", { name: GAPPY.id })).toBeVisible();
+  const basis = page.getByRole("region", { name: "Lineage" }).getByRole("listitem").filter({ hasText: GAPPY.citation });
+  await expect(basis.getByRole("link", { name: GAPPY.citation })).toBeVisible();
 });

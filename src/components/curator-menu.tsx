@@ -1,6 +1,8 @@
 import { signOut } from "@/app/(console)/actions";
 import { currentCurator } from "@/lib/api/curation";
 
+import { button } from "./styles";
+
 // Who is signed in, checked with the API on every request: an expired session goes back to sign-in.
 export async function CuratorMenu() {
   const curator = await currentCurator();
@@ -10,10 +12,7 @@ export async function CuratorMenu() {
         Signed in as <strong className="font-medium text-text">{curator.display_name}</strong>
       </p>
       <form action={signOut}>
-        <button
-          type="submit"
-          className="whitespace-nowrap rounded-ui border border-line-strong px-3 py-1.5 transition-colors hover:bg-sunken active:translate-y-px"
-        >
+        <button type="submit" className={button("quiet")}>
           Sign Out
         </button>
       </form>

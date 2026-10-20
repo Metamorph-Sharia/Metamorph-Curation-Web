@@ -18,11 +18,13 @@ export function EditTextForm({
   sha256,
   wording,
   paged,
+  selection = null,
 }: {
   documentId: string;
   sha256: string;
   wording: string;
   paged: boolean;
+  selection?: [number, number] | null;
 }) {
   return (
     <ActionForm action={correctText.bind(null, documentId, sha256)} submit="Save Correction" busy="Saving…">
@@ -30,7 +32,7 @@ export function EditTextForm({
         <span id="wording-label" className="text-sm font-medium">
           Text
         </span>
-        <TextEditor initial={wording} paged={paged} name="wording" labelledBy="wording-label" />
+        <TextEditor initial={wording} paged={paged} name="wording" labelledBy="wording-label" selection={selection} />
         {paged ? (
           <p className="text-xs text-muted">
             Page markers (<code className="font-mono">&lt;!-- page N --&gt;</code>) are kept as they are: page numbers come

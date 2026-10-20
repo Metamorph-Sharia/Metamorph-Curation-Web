@@ -8,6 +8,7 @@ export const CURATOR = { username: "e2e", password: "e2e-password-123", name: "E
 export const PUBLISHED = { id: "ojk:pojk:2018:35", citation: "POJK 35/POJK.05/2018" }; // cites Keppres 84/P: unlinked
 export const GAPPY = { id: "ojk:pojk:2019:10", citation: "POJK 10/POJK.05/2019" }; // held: Pasal 2 missing
 export const TO_CORRECT = { id: "ojk:pojk:2020:7", citation: "POJK 7/POJK.05/2020" }; // held: Pasal 2 missing
+export const AMENDING = { id: "ojk:pojk:2021:2", citation: "POJK 2/POJK.05/2021" }; // amends PUBLISHED's Pasal 2
 export const UNIDENTIFIED = { id: "unresolved:ojk:bfca3f541eaae58f", citation: "POJK tanpa nomor" }; // held: no ID
 
 export function documentPath(id: string): string {

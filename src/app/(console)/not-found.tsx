@@ -1,16 +1,23 @@
 import Link from "next/link";
 
+import { button } from "@/components/styles";
+
 export default function NotFound() {
   return (
-    <div className="grid max-w-[65ch] gap-3">
-      <h1 className="text-2xl font-semibold tracking-tight">Not Available</h1>
-      <p className="text-muted">There’s no such document, text or queue. It may have been renamed by an assigned ID.</p>
-      <p>
-        <Link href="/documents" className="text-accent underline-offset-4 hover:underline">
-          Search the documents
-        </Link>{" "}
-        or go back to the <Link href="/" className="text-accent underline-offset-4 hover:underline">Overview</Link>.
+    <div className="grid max-w-[65ch] gap-4 py-8">
+      <p className="font-heading text-7xl leading-none text-line-strong" aria-hidden>
+        404
       </p>
+      <h1 className="font-heading text-4xl leading-tight tracking-tight">Not Available</h1>
+      <p className="text-muted text-pretty">There’s no such document, text or queue. It may have been renamed by an assigned ID.</p>
+      <div className="flex flex-wrap gap-3">
+        <Link href="/documents" className={button("primary")}>
+          Search the documents
+        </Link>
+        <Link href="/" className={button("quiet")}>
+          Overview
+        </Link>
+      </div>
     </div>
   );
 }

@@ -3,6 +3,8 @@
 import { useSearchParams } from "next/navigation";
 import { useActionState } from "react";
 
+import { button, CONTROL, notice } from "@/components/styles";
+
 import { signIn, type SignInState } from "./actions";
 
 const INITIAL: SignInState = { username: "" };
@@ -15,12 +17,12 @@ export function SignInForm() {
   return (
     <form action={action} className="grid gap-5">
       {expired ? (
-        <p role="status" className="rounded-ui bg-warning-soft px-3 py-2 text-sm text-warning">
+        <p role="status" className={`${notice("warning")} text-warning`}>
           Your session ended. Sign in again to carry on.
         </p>
       ) : null}
       <input type="hidden" name="next" value={params.get("next") ?? "/"} />
-      <div className="grid gap-2">
+      <div className="grid gap-1.5">
         <label htmlFor="username" className="text-sm font-medium">
           Username
         </label>
@@ -33,10 +35,10 @@ export function SignInForm() {
           required
           defaultValue={state.username}
           aria-describedby={state.error ? "sign-in-error" : undefined}
-          className="rounded-ui border border-line-strong bg-surface px-3 py-2 text-base"
+          className={`${CONTROL} min-h-11 text-base`}
         />
       </div>
-      <div className="grid gap-2">
+      <div className="grid gap-1.5">
         <label htmlFor="password" className="text-sm font-medium">
           Password
         </label>
@@ -47,7 +49,7 @@ export function SignInForm() {
           autoComplete="current-password"
           required
           aria-describedby={state.error ? "sign-in-error" : undefined}
-          className="rounded-ui border border-line-strong bg-surface px-3 py-2 text-base"
+          className={`${CONTROL} min-h-11 text-base`}
         />
       </div>
       {state.error ? (
@@ -58,7 +60,7 @@ export function SignInForm() {
       <button
         type="submit"
         disabled={pending}
-        className="rounded-ui bg-accent px-4 py-2.5 font-medium text-on-accent transition-colors hover:bg-accent-hover active:translate-y-px disabled:opacity-70"
+        className={`${button("primary")} min-h-11 text-base`}
       >
         {pending ? "Signing In…" : "Sign In"}
       </button>

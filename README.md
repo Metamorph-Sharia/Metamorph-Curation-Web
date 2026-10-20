@@ -4,7 +4,7 @@ The Metamorph team's console for reviewing and correcting the legal knowledge ba
 
 The console has no data or rules of its own. Everything it shows and every change it makes goes through the **curation JSON API**: `metamorph api` in [Metamorph-Knowledge-Platform](../Metamorph-Knowledge-Platform). The design and the migration plan are in that repository, at `docs/curation-web-separation-design.md`.
 
-> **Status (2026-10-19): the curation console.** It replaced the platform's first, server-rendered curation app, which is retired. Locally, the platform's compose `web` service builds this repository and serves it at http://localhost:8000.
+> **Status (2026-10-20): the curation console**, with the reader, lineage, search and browsing of Pasal.id's gap analysis (`docs/pasal-id-gap-analysis.md` in the platform). It replaced the platform's first, server-rendered curation app, which is retired. Locally, the platform's compose `web` service builds this repository and serves it at http://localhost:8000.
 
 ## Pages
 
@@ -13,8 +13,10 @@ The console has no data or rules of its own. Everything it shows and every chang
 | **Overview** `/` | Sees what the publish gate holds back, what waits for review, ingestion health, the registry and the latest loads |
 | **Held** `/held?check=` | Works through the documents the publish gate holds back, filtered by check. Those whose last good version is still published come first |
 | **Review** `/review?kind=` | Resolves or dismisses conflicts, unlinked citations and quarantined lines, each with a note |
-| **Documents** `/documents?q=` | Finds a document by ID, citation, title or alias |
+| **Documents** `/documents?q=&kind=&issuer=&family=&year=&status=&state=` | Finds documents by ID, citation, title, alias or words in their published text, and the matching articles (`kind=articles`), with filters and their counts. Without a query, lists every document the filters leave |
+| **Browse** `/browse`, `/browse/{issuer}/{family}?year=` | Every series the registry holds; a series by year and number, with the numbers not held marked |
 | **A document** `/documents/{id}` | Sees why it is held, or that it is suppressed. On the same page, the curator can: correct and withdraw fields; approve a text's problems as they are; open its files and texts; link citations; decide conflicts; assign an ID; suppress and restore |
+| **Read the text** `/documents/{id}/read?text=&part=&at=&pdf=1` | Reads a text as the parser cut it: the outline, each article in full, gaps in the numbering, what later documents changed (and their new wording), references to other articles as links, the PDF beside it. Each article can be linked, cited, opened at its PDF page, or corrected |
 | **Correct the text** `…/texts/{sha}/edit` | Fixes a main text's wording in an editor (CodeMirror) that keeps page markers as they are. Saving parses, checks and publishes at once |
 | **Text correction** `…/texts/{sha}/correction` | Compares a correction with the source's wording, line by line |
 | **Add Document** `/documents/new` | Adds a document no connector holds. Its file goes straight from the browser to the object store |
@@ -41,7 +43,7 @@ browser ──▶ S3, only through short-lived links the API signs (opening a fi
 
 Dependencies point one way: `app/` → `components/` and `lib/`. Only `lib/api/` knows the API exists, and views never import it.
 
-The visual design carries over the first curation app's identity: one deep-green accent, a 6px radius, and light and dark modes from the same tokens (`src/app/globals.css`), with Geist for type.
+The visual design is a legal reader's, after [pasal.id](https://pasal.id): warm paper, white cards with hairline borders, one deep-green accent, an 8px radius, and light and dark modes from the same tokens (`src/app/globals.css`). Headings are set in Instrument Serif, text in Instrument Sans, IDs and code in Geist Mono. The shared looks (card, control, link, button, notice) are class lists in `src/components/styles.ts`.
 
 ## Run it
 
@@ -83,7 +85,7 @@ npm run test:e2e            # Playwright: every page and action, on a production
 **The end-to-end tests change data, so they run in a world of their own:**
 - the `metamorph_e2e` database and the `metamorph-e2e` bucket;
 - the API on port 8012 (`e2e/api.sh`), with a test account;
-- a fresh seed for each spec file (`e2e/seed.sh`, about two seconds), loading `e2e/fixtures/bundle`: one published document, two held for their structure, and one held for its identity.
+- a fresh seed for each spec file (`e2e/seed.sh`, about two seconds), loading `e2e/fixtures/bundle`: one published paged document, the regulation amending it, two held for their structure, and one held for its identity.
 
 They need the platform repository beside this one (or `METAMORPH_PLATFORM`), its compose `postgres` and `objectstore`, and `uv`. They include adding and correcting a 1.8 MB text, the longest the platform holds. CI (`.github/workflows/ci.yml`) runs all of the checks.
 

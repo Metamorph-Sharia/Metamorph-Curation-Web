@@ -1,10 +1,14 @@
+import Link from "next/link";
+
 import type { DocumentView } from "@/lib/api/types";
 import { formatCount, formatDay, formatMoment } from "@/lib/format";
-import { sentence } from "@/lib/labels";
+import { addressLabel, lineage, statusLabel, statusTone } from "@/lib/legal";
+import { documentHref, readerHref } from "@/lib/routes";
 
 import { Badge } from "../badge";
-import { DocumentLink } from "../document-link";
+import { Empty } from "../empty";
 import { Section } from "../section";
+import { button, CARD, LINK } from "../styles";
 import { Table } from "../table";
 
 export function SourcesSection({ sources }: { sources: DocumentView["sources"] }) {
@@ -17,7 +21,7 @@ export function SourcesSection({ sources }: { sources: DocumentView["sources"] }
               {source.connector}
             </td>
             <td className="break-all">
-              <a href={source.url} target="_blank" rel="noopener noreferrer" className="font-mono text-accent underline-offset-4 hover:underline" translate="no">
+              <a href={source.url} target="_blank" rel="noopener noreferrer" className={`${LINK} font-mono`} translate="no">
                 {source.source_id}
                 <span className="sr-only"> (new tab)</span>
               </a>
@@ -37,44 +41,53 @@ export function SourcesSection({ sources }: { sources: DocumentView["sources"] }
   );
 }
 
-export function LinksSection({ view }: { view: DocumentView }) {
-  const groups: [string, DocumentView["links_out"]][] = [
-    ["This Document Cites", view.links_out],
-    ["Cited By", view.links_in],
-  ];
+// What changed this document, what it changes, and what it rests on: its links, grouped by what they mean.
+export function LineageSection({ view }: { view: DocumentView }) {
+  const groups = lineage(view.links_out, view.links_in);
   return (
-    <Section id="links" title="Links">
-      {groups.map(([title, rows]) => (
-        <div key={title} className="grid gap-2">
-          <h3 className="text-sm font-medium">
-            {title} ({formatCount(rows.length)})
-          </h3>
-          {rows.length ? (
-            <Table head={["Relation", "Document", "Where", "How"]}>
-              {rows.map((link) => (
-                <tr key={`${link.type}/${link.document_id}/${link.from_address}/${link.to_address}`}>
-                  <td className="whitespace-nowrap">{sentence(link.type)}</td>
-                  <td>
-                    {link.document_title ? (
-                      <DocumentLink id={link.document_id} title={link.document_title} />
-                    ) : (
-                      <span className="font-mono text-muted" translate="no">
-                        {link.document_id}
+    <Section id="lineage" title="Lineage">
+      {groups.length ? (
+        <div className="grid gap-6">
+          {groups.map((group) => (
+            <div key={group.key} className="grid gap-2">
+              <h3 className="flex items-baseline gap-2 text-sm font-semibold">
+                {group.label} <span className="font-normal tabular-nums text-muted">({formatCount(group.entries.length)})</span>
+              </h3>
+              <ul className={`${CARD} divide-y divide-line`}>
+                {group.entries.map((entry) => (
+                  <li key={entry.documentId} className="grid gap-1 px-4 py-3 text-sm sm:grid-cols-[minmax(0,1fr)_auto] sm:gap-x-6">
+                    <div className="grid min-w-0 gap-0.5">
+                      {entry.title !== null ? (
+                        <Link href={documentHref(entry.documentId)} className={`${LINK} w-fit font-medium`}>
+                          {entry.citation ?? entry.documentId}
+                        </Link>
+                      ) : (
+                        <span className="font-mono text-muted" translate="no">
+                          {entry.documentId} <span className="font-sans">(not held)</span>
+                        </span>
+                      )}
+                      {entry.title ? <span className="line-clamp-2 text-muted">{entry.title}</span> : null}
+                      {entry.articles.length ? (
+                        <span>
+                          {entry.wholeDocument ? "The document, and " : ""}
+                          {entry.articles.join(", ")}
+                        </span>
+                      ) : null}
+                    </div>
+                    {entry.effectiveOn ? (
+                      <span className="whitespace-nowrap text-muted tabular-nums sm:text-right">
+                        Effective {formatDay(entry.effectiveOn)}
                       </span>
-                    )}
-                  </td>
-                  <td className="font-mono text-xs">
-                    {[link.from_address, link.to_address].filter(Boolean).join(" → ") || "Whole document"}
-                  </td>
-                  <td className="text-muted">{sentence(link.method)}</td>
-                </tr>
-              ))}
-            </Table>
-          ) : (
-            <p className="text-sm text-muted">None.</p>
-          )}
+                    ) : null}
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
         </div>
-      ))}
+      ) : (
+        <Empty>No link to or from another document.</Empty>
+      )}
     </Section>
   );
 }
@@ -86,17 +99,27 @@ export function StatusSection({ rows }: { rows: DocumentView["status_history"] }
         <Table head={["Status", "Of", "From", "Source"]}>
           {rows.map((row, index) => (
             <tr key={`${row.status}/${row.address}/${row.effective_from}/${index}`}>
-              <td className="font-mono">{row.status}</td>
-              <td className="font-mono text-xs">{row.address ?? "Whole document"}</td>
-              <td className="whitespace-nowrap">{row.effective_from ? formatDay(row.effective_from) : "Not stated"}</td>
-              <td className="text-muted" translate="no">
-                {row.source}
+              <td className="whitespace-nowrap">
+                <Badge tone={statusTone(row.status)}>{statusLabel(row.status)}</Badge>
+              </td>
+              <td>{row.address ? addressLabel(row.address) : "The whole document"}</td>
+              <td className="whitespace-nowrap tabular-nums">{row.effective_from ? formatDay(row.effective_from) : "Not stated"}</td>
+              <td className="text-muted">
+                {row.caused_by ? (
+                  <Link href={documentHref(row.caused_by)} className={LINK}>
+                    {row.caused_by_citation ?? row.caused_by}
+                  </Link>
+                ) : (
+                  <span className="font-mono" translate="no">
+                    {row.source}
+                  </span>
+                )}
               </td>
             </tr>
           ))}
         </Table>
       ) : (
-        <p className="text-sm text-muted">No status history yet.</p>
+        <Empty>No status history yet.</Empty>
       )}
     </Section>
   );
@@ -104,31 +127,27 @@ export function StatusSection({ rows }: { rows: DocumentView["status_history"] }
 
 export function StructureSection({ view }: { view: DocumentView }) {
   const { provisions, provisions_total: total } = view;
+  const changed = provisions.filter((provision) => provision.valid_to).length;
   return (
     <Section id="structure" title="Structure">
-      {provisions.length ? (
-        <>
-          <p className="text-sm text-muted">
+      {total ? (
+        <div className={`${CARD} grid gap-3 p-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-5`}>
+          <p className="text-sm">
             {formatCount(total)} provisions in the main text
-            {total > provisions.length ? `; the first ${formatCount(provisions.length)} are shown` : ""}.
+            {changed ? (
+              <>
+                {", "}
+                <Badge tone="warning">{formatCount(changed)} changed by later documents</Badge>
+              </>
+            ) : null}
+            .
           </p>
-          <ol aria-label="Provisions" className="grid rounded-ui border border-line bg-surface py-2 text-sm">
-            {provisions.map((provision) => (
-              <li
-                key={provision.address}
-                style={{ paddingLeft: `${1 + provision.depth * 1.25}rem` }}
-                className="flex flex-wrap items-baseline gap-x-3 py-1 pr-4 [content-visibility:auto] [contain-intrinsic-size:auto_1.75rem]"
-              >
-                <span className="font-medium">{provision.label}</span>
-                {provision.heading ? <span>{provision.heading}</span> : null}
-                {provision.page_start ? <span className="text-xs text-muted">p.&nbsp;{provision.page_start}</span> : null}
-                {provision.valid_to ? <Badge tone="warning">Changed {formatDay(provision.valid_to)}</Badge> : null}
-              </li>
-            ))}
-          </ol>
-        </>
+          <Link href={readerHref(view.summary.id)} className={button("primary")}>
+            Read the Text
+          </Link>
+        </div>
       ) : (
-        <p className="text-sm text-muted">The parser found no provisions in this document’s text.</p>
+        <Empty>The parser found no provisions in this document’s text.</Empty>
       )}
     </Section>
   );

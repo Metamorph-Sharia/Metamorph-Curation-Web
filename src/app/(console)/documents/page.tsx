@@ -1,16 +1,18 @@
 import type { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { ListSkeleton, PageHead } from "@/components/page-head";
 import { SearchView } from "@/components/search-view";
 import { search } from "@/lib/api/curation";
-import { param } from "@/lib/query";
+import { pageNumber, param } from "@/lib/query";
+import { searchHref, type SearchState } from "@/lib/search";
 
 export const metadata: Metadata = { title: "Documents" };
 
 export default function DocumentsPage({ searchParams }: PageProps<"/documents">) {
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-10">
       <PageHead title="Documents" />
       <Suspense fallback={<ListSkeleton />}>
         <Search searchParams={searchParams} />
@@ -19,31 +21,22 @@ export default function DocumentsPage({ searchParams }: PageProps<"/documents">)
   );
 }
 
+const FILTERS = ["issuer", "family", "year", "status", "state"] as const;
+
+// The search's state is the URL's: the query, what to list (documents or articles), the filters and the page.
 async function Search({ searchParams }: { searchParams: PageProps<"/documents">["searchParams"] }) {
-  const q = (param(await searchParams, "q") ?? "").trim();
-  return (
-    <div className="grid gap-6">
-      <form role="search" action="/documents" className="flex flex-wrap items-end gap-3">
-        <div className="grid min-w-0 flex-1 gap-1.5">
-          <label htmlFor="q" className="text-sm font-medium">
-            Search
-          </label>
-          <input
-            id="q"
-            name="q"
-            type="search"
-            defaultValue={q}
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="10/POJK.05/2019, ojk:pojk:2019:10, or part of a title…"
-            className="w-full rounded-ui border border-line-strong bg-surface px-3 py-2 text-sm placeholder:text-muted"
-          />
-        </div>
-        <button type="submit" className="rounded-ui bg-accent px-4 py-2 text-sm font-medium text-on-accent transition-colors hover:bg-accent-hover active:translate-y-px">
-          Search
-        </button>
-      </form>
-      <SearchView query={q} results={q ? await search(q) : []} />
-    </div>
-  );
+  const query = await searchParams;
+  const q = (param(query, "q") ?? "").trim();
+  const state: SearchState = {
+    q: q || undefined,
+    kind: q && param(query, "kind") === "articles" ? "articles" : "documents",
+    page: pageNumber(query),
+  };
+  for (const name of FILTERS) {
+    state[name] = param(query, name) || undefined;
+  }
+  if (Object.values(query).some((value) => value === "")) {
+    redirect(searchHref(state, { page: state.page })); // the search form sends its empty filters too
+  }
+  return <SearchView state={state} page={await search(state)} />;
 }

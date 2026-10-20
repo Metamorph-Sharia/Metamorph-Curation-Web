@@ -4,6 +4,7 @@ import { holdCheck } from "@/lib/labels";
 
 import { DocumentLink } from "./document-link";
 import { Empty } from "./empty";
+import { CARD } from "./styles";
 import { Pager, Tabs } from "./tabs";
 
 const href = (check: string | null, page = 1) =>
@@ -25,18 +26,21 @@ export function HeldView({ page }: { page: HeldPage }) {
       <Tabs label="Held by check" tabs={tabs} />
       {page.check ? <p className="max-w-[65ch] text-sm text-muted">{holdCheck(page.check).todo}</p> : null}
       {page.rows.length ? (
-        <ul aria-label="Held documents" className="divide-y divide-line rounded-ui border border-line bg-surface">
+        <ul aria-label="Held documents" className="grid gap-3">
           {page.rows.map((row) => (
-            <li key={row.document_id} className="grid gap-2 p-4 [content-visibility:auto]">
+            <li key={row.document_id} className={`${CARD} grid gap-3 p-4 [content-visibility:auto] sm:p-5`}>
               <DocumentLink id={row.document_id} title={row.title} />
-              <ul className="grid gap-1 text-sm">
+              <ul className="grid gap-1.5 text-sm">
                 {row.reasons.map((reason) => (
-                  <li key={`${reason.check}:${reason.detail}`}>
-                    {holdCheck(reason.check).label}: {reason.detail}
+                  <li key={`${reason.check}:${reason.detail}`} className="flex gap-2">
+                    <span aria-hidden className="mt-2 size-1.5 shrink-0 rounded-full bg-warning" />
+                    <span>
+                      {holdCheck(reason.check).label}: {reason.detail}
+                    </span>
                   </li>
                 ))}
               </ul>
-              <p className="text-xs text-muted">
+              <p className="border-t border-line pt-3 text-xs text-muted">
                 Held since {formatDay(row.held_since)}.{" "}
                 {row.published_at
                   ? `Last published ${formatDay(row.published_at)}: the assistant still sees that version.`

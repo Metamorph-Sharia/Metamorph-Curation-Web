@@ -3,6 +3,7 @@ import "server-only";
 import { notFound, redirect } from "next/navigation";
 import { connection } from "next/server";
 
+import type { SearchState } from "../search";
 import { sessionToken } from "../session";
 import { curationApi } from "./client";
 import { apiError, type ApiError, UNAVAILABLE } from "./errors";
@@ -10,10 +11,13 @@ import type {
   CorrectionDiff,
   Curator,
   Dashboard,
-  DocumentRow,
   DocumentView,
   HeldPage,
   ReviewPage,
+  SearchPage,
+  SeriesPage,
+  SeriesRow,
+  TextReading,
   TextToEdit,
 } from "./types";
 
@@ -42,12 +46,33 @@ export async function reviews(kind: string, page: number): Promise<ReviewPage> {
   return read<ReviewPage>((api) => api.GET("/api/v1/reviews", { params: { query: { kind, page } } }));
 }
 
-export async function search(q: string): Promise<DocumentRow[]> {
-  return read<DocumentRow[]>((api) => api.GET("/api/v1/documents", { params: { query: { q } } }));
+// Documents whose metadata or published wording matches (every document without a query), or the matching
+// articles; filtered, with each filter's counts.
+export async function search({ year, ...state }: SearchState): Promise<SearchPage> {
+  const query = { ...state, year: year && /^\d{4}$/.test(year) ? Number(year) : undefined };
+  return read<SearchPage>((api) => api.GET("/api/v1/documents", { params: { query } }));
+}
+
+export async function series(): Promise<SeriesRow[]> {
+  return read<SeriesRow[]>((api) => api.GET("/api/v1/series"));
+}
+
+export async function seriesPage(issuer: string, family: string, year: number | undefined): Promise<SeriesPage> {
+  return read<SeriesPage>((api) =>
+    api.GET("/api/v1/series/{issuer}/{family}", { params: { path: { issuer, family }, query: { year } } }),
+  );
 }
 
 export async function document(id: string): Promise<DocumentView> {
   return read<DocumentView>((api) => api.GET("/api/v1/documents/{document_id}", { params: { path: { document_id: id } } }));
+}
+
+// A text as the parser cut it, one part at a time: the part asked for, or the one the provision `at` is in.
+export async function reading(id: string, place: { text?: string; part?: number; at?: string }): Promise<TextReading> {
+  const query = { text: place.text, part: place.part, at: place.at };
+  return read<TextReading>((api) =>
+    api.GET("/api/v1/documents/{document_id}/reading", { params: { path: { document_id: id }, query } }),
+  );
 }
 
 export async function textToEdit(id: string, sha256: string): Promise<TextToEdit> {

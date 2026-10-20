@@ -5,6 +5,7 @@ import { reviewQueue } from "@/lib/labels";
 import { DecideReview } from "./decide-review";
 import { DocumentLink } from "./document-link";
 import { Empty } from "./empty";
+import { CARD } from "./styles";
 import { Pager, Tabs } from "./tabs";
 
 const href = (kind: string, page = 1) => `/review?kind=${kind}${page > 1 ? `&page=${page}` : ""}`;
@@ -28,16 +29,16 @@ export function ReviewView({ page, counts }: { page: ReviewPage; counts: [string
         {queue.why} {queue.todo}
       </p>
       {page.rows.length ? (
-        <ul aria-label="Items waiting for review" className="divide-y divide-line rounded-ui border border-line bg-surface">
+        <ul aria-label="Items waiting for review" className="grid gap-3">
           {page.rows.map((row) => (
-            <li key={row.id} className="grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_auto]">
+            <li key={row.id} className={`${CARD} grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_auto]`}>
               <div className="grid content-start gap-2">
                 {row.document_id ? (
                   <DocumentLink id={row.document_id} title={row.document_title} />
                 ) : (
                   <span className="text-sm text-muted">No single document</span>
                 )}
-                <p className="text-sm">{row.summary}</p>
+                <p className="max-w-[70ch] text-sm text-pretty">{row.summary}</p>
                 <p className="text-xs text-muted">Waiting since {formatDay(row.created_at)}</p>
               </div>
               <DecideReview itemId={row.id} back={back} />

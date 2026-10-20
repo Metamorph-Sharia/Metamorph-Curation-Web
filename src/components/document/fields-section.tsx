@@ -6,17 +6,19 @@ import { FIELD_LABELS, fieldLabel } from "@/lib/labels";
 import { ActionForm } from "../action-form";
 import { ReasonField, SelectField, TextField } from "../fields";
 import { Section } from "../section";
+import { CARD } from "../styles";
+import { TABLE, TABLE_FRAME, TABLE_HEAD } from "../table";
 
 export function FieldsSection({ view }: { view: DocumentView }) {
   const id = view.summary.id;
   return (
     <Section id="fields" title="Fields">
-      <p className="max-w-[75ch] text-sm text-muted">
+      <p className="max-w-[75ch] text-sm text-muted text-pretty">
         “Published” is what the assistant sees: the sources’ value, or a curator’s correction.
       </p>
-      <div className="overflow-x-auto rounded-ui border border-line bg-surface">
-        <table className="w-full text-sm [&_td]:px-4 [&_td]:py-2.5 [&_td]:align-top [&_th]:px-4 [&_th]:py-2.5 [&_tbody_tr+tr]:border-t [&_tbody_tr+tr]:border-line">
-          <thead className="bg-sunken text-left text-xs font-medium text-muted">
+      <div className={TABLE_FRAME}>
+        <table className={`${TABLE} [&_td]:align-top [&_th]:align-top`}>
+          <thead className={TABLE_HEAD}>
             <tr>
               <th scope="col">Field</th>
               <th scope="col">Published</th>
@@ -66,8 +68,8 @@ export function FieldsSection({ view }: { view: DocumentView }) {
         </table>
       </div>
 
-      <div className="rounded-ui border border-line bg-surface p-5">
-        <h3 className="mb-4 font-medium">Correct a Field</h3>
+      <div className={`${CARD} grid gap-5 p-5 sm:p-6`}>
+        <h3 className="font-heading text-xl leading-tight">Correct a Field</h3>
         <ActionForm action={correctField.bind(null, id)} submit="Save Correction" busy="Saving…">
           <div className="grid gap-4 md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
             <SelectField id="correct-field" name="field" label="Field" options={Object.entries(FIELD_LABELS)} />

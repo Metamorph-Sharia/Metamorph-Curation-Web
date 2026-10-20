@@ -1,8 +1,7 @@
 import { asSentence } from "@/lib/labels";
 import type { ReactNode } from "react";
 
-const CONTROL =
-  "w-full rounded-ui border border-line-strong bg-surface px-3 py-2 text-sm text-text placeholder:text-muted";
+import { CONTROL } from "./styles";
 
 // A labelled input: label above, help below, never a placeholder as the label.
 export function TextField({
@@ -92,7 +91,7 @@ export function SelectField({
         defaultValue={defaultValue}
         aria-invalid={error ? true : undefined}
         aria-describedby={error ? `${id}-error` : undefined}
-        className={`${CONTROL} bg-surface`}
+        className={CONTROL}
       >
         {options.map(([value, text]) => (
           <option key={value} value={value}>

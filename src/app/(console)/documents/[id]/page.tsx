@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
 
+import { Breadcrumbs } from "@/components/breadcrumbs";
 import { DocumentPage } from "@/components/document/document-page";
 import { DoneNotice } from "@/components/done-notice";
 import { ListSkeleton } from "@/components/page-head";
@@ -22,6 +23,7 @@ async function Document({ params, searchParams }: Pick<PageProps<"/documents/[id
   const view = await document(decodeURIComponent(id));
   return (
     <div className="grid gap-6">
+      <Breadcrumbs trail={[["/documents", "Documents"]]} current={view.summary.citation} />
       <DoneNotice done={param(query, "done")} />
       <DocumentPage view={view} />
     </div>

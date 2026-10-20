@@ -25,7 +25,11 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
-        /** Search */
+        /**
+         * Search
+         * @description Documents whose metadata or published wording matches `q` (all of them when it is empty), or, with
+         *     kind=articles, the matching articles; filtered, with each filter's counts.
+         */
         get: operations["search_api_v1_documents_get"];
         put?: never;
         /** Add Document */
@@ -152,6 +156,27 @@ export interface paths {
          * @description Answers the document under its new ID.
          */
         post: operations["assign_id_api_v1_documents__document_id__id_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/documents/{document_id}/reading": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Reading
+         * @description A text as the parser cut it, one part at a time: `text` (the main text when empty), and the part asked
+         *     for or the one the provision `at` opens in.
+         */
+        get: operations["reading_api_v1_documents__document_id__reading_get"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -346,6 +371,46 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/series": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Series
+         * @description Each issuer's families of instruments, with what the registry holds of them.
+         */
+        get: operations["series_api_v1_series_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/series/{issuer}/{family}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Series Page
+         * @description A family's documents of one year (the newest when none is asked for), by number.
+         */
+        get: operations["series_page_api_v1_series__issuer___family__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/uploads": {
         parameters: {
             query?: never;
@@ -367,6 +432,28 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * ArticleHit
+         * @description A published article whose wording matches: the unit lawyers cite, not each of its paragraphs.
+         */
+        ArticleHit: {
+            /** Address */
+            address: string;
+            /** Citation */
+            citation: string;
+            /** Document Id */
+            document_id: string;
+            /** Excerpt */
+            excerpt: string;
+            /** Heading */
+            heading: string | null;
+            /** Label */
+            label: string;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+        };
         /** BundleRow */
         BundleRow: {
             /** Connector */
@@ -572,6 +659,29 @@ export interface components {
             /** Recent Bundles */
             recent_bundles: components["schemas"]["BundleRow"][];
         };
+        /** DocumentHit */
+        DocumentHit: {
+            /** Citation */
+            citation: string;
+            /** Family */
+            family: string;
+            /** Id */
+            id: string;
+            /** Issuer */
+            issuer: string;
+            /** Kind */
+            kind: string;
+            /** Number */
+            number: string;
+            /** State */
+            state: string;
+            /** Status */
+            status: string;
+            /** Title */
+            title: string;
+            /** Year */
+            year: number | null;
+        };
         /** DocumentRow */
         DocumentRow: {
             /** Citation */
@@ -654,6 +764,16 @@ export interface components {
             sha256: string;
             /** Storage Key */
             storage_key: string;
+        };
+        /** Facet */
+        Facet: {
+            /** Name */
+            name: string;
+            /** Values */
+            values: [
+                string,
+                number
+            ][];
         };
         /** FieldCorrection */
         FieldCorrection: {
@@ -740,10 +860,14 @@ export interface components {
         };
         /** LinkRow */
         LinkRow: {
+            /** Document Citation */
+            document_citation?: string | null;
             /** Document Id */
             document_id: string;
             /** Document Title */
             document_title: string | null;
+            /** Effective On */
+            effective_on?: string | null;
             /** From Address */
             from_address: string | null;
             /** Method */
@@ -825,6 +949,34 @@ export interface components {
              */
             reason: string;
         };
+        /**
+         * PassageReference
+         * @description A reference in a passage to another provision of the same text ("Pasal 19 ayat (2)").
+         */
+        PassageReference: {
+            /** Address */
+            address: string;
+            /** End */
+            end: number;
+            /** Start */
+            start: number;
+        };
+        /**
+         * ProvisionChange
+         * @description Another document's change to a provision: an amendment or a revocation, and where the new wording is.
+         */
+        ProvisionChange: {
+            /** Citation */
+            citation: string | null;
+            /** Document Id */
+            document_id: string;
+            /** Effective On */
+            effective_on: string | null;
+            /** New Address */
+            new_address: string | null;
+            /** Type */
+            type: string;
+        };
         /** ProvisionRow */
         ProvisionRow: {
             /** Address */
@@ -839,6 +991,62 @@ export interface components {
             label: string;
             /** Page Start */
             page_start: number | null;
+            /** Valid To */
+            valid_to: string | null;
+        };
+        /** ReadableText */
+        ReadableText: {
+            /** Detail */
+            detail: string;
+            /** Language */
+            language: string;
+            /** Main */
+            main: boolean;
+            /** Sha256 */
+            sha256: string;
+        };
+        /** ReadingPassage */
+        ReadingPassage: {
+            /** Address */
+            address: string | null;
+            /** Opens */
+            opens: boolean;
+            /**
+             * References
+             * @default []
+             */
+            references: components["schemas"]["PassageReference"][];
+            /** Text */
+            text: string;
+            /** Titled */
+            titled: boolean;
+        };
+        /** ReadingProvision */
+        ReadingProvision: {
+            /** Address */
+            address: string;
+            /** Changes */
+            changes: components["schemas"]["ProvisionChange"][];
+            /** Depth */
+            depth: number;
+            /** Edit From */
+            edit_from: number;
+            /** Edit To */
+            edit_to: number;
+            /** Heading */
+            heading: string | null;
+            /** Kind */
+            kind: string;
+            /** Label */
+            label: string;
+            /** Page End */
+            page_end: number | null;
+            /** Page Start */
+            page_start: number | null;
+            /** Parent Address */
+            parent_address: string | null;
+            /** Part */
+            part: number;
             /** Valid To */
             valid_to: string | null;
         };
@@ -895,6 +1103,73 @@ export interface components {
             /** Summary */
             summary: string;
         };
+        /** SearchFilters */
+        SearchFilters: {
+            /** Family */
+            family?: string | null;
+            /** Issuer */
+            issuer?: string | null;
+            /** State */
+            state?: string | null;
+            /** Status */
+            status?: string | null;
+            /** Year */
+            year?: number | null;
+        };
+        /** SearchPage */
+        SearchPage: {
+            /** Articles */
+            articles: components["schemas"]["ArticleHit"][];
+            /** Articles Total */
+            articles_total: number;
+            /** Documents */
+            documents: components["schemas"]["DocumentHit"][];
+            /** Documents Total */
+            documents_total: number;
+            /** Facets */
+            facets: components["schemas"]["Facet"][];
+            filters: components["schemas"]["SearchFilters"];
+            /** Kind */
+            kind: string;
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Query */
+            query: string;
+        };
+        /** SeriesPage */
+        SeriesPage: {
+            /** Documents */
+            documents: components["schemas"]["DocumentHit"][];
+            /** Family */
+            family: string;
+            /** Issuer */
+            issuer: string;
+            /** Year */
+            year: number | null;
+            /** Years */
+            years: [
+                number,
+                number
+            ][];
+        };
+        /**
+         * SeriesRow
+         * @description An issuer's family of instruments (OJK's POJK, BI's PADG …): what the registry holds of it.
+         */
+        SeriesRow: {
+            /** Documents */
+            documents: number;
+            /** Family */
+            family: string;
+            /** First Year */
+            first_year: number | null;
+            /** Issuer */
+            issuer: string;
+            /** Last Year */
+            last_year: number | null;
+        };
         /** Session */
         Session: {
             curator: components["schemas"]["Curator"];
@@ -933,6 +1208,10 @@ export interface components {
         StatusRow: {
             /** Address */
             address: string | null;
+            /** Caused By */
+            caused_by?: string | null;
+            /** Caused By Citation */
+            caused_by_citation?: string | null;
             /** Effective From */
             effective_from: string | null;
             /** Source */
@@ -964,6 +1243,38 @@ export interface components {
             created_at: string;
             /** Reason */
             reason: string;
+        };
+        /**
+         * TextReading
+         * @description One part of a text, read as the parser cut it, with the whole text's outline.
+         */
+        TextReading: {
+            /** Citation */
+            citation: string;
+            /** Corrected */
+            corrected: boolean;
+            /** Document Id */
+            document_id: string;
+            /** Editable */
+            editable: boolean;
+            /** Part */
+            part: number;
+            /** Parts */
+            parts: number;
+            /** Passages */
+            passages: components["schemas"]["ReadingPassage"][];
+            /** Pdf Sha256 */
+            pdf_sha256: string | null;
+            /** Problems */
+            problems: string[];
+            /** Provisions */
+            provisions: components["schemas"]["ReadingProvision"][];
+            /** Sha256 */
+            sha256: string;
+            /** Texts */
+            texts: components["schemas"]["ReadableText"][];
+            /** Title */
+            title: string;
         };
         /** TextToEdit */
         TextToEdit: {
@@ -1077,6 +1388,13 @@ export interface operations {
         parameters: {
             query?: {
                 q?: string;
+                kind?: string;
+                issuer?: string;
+                family?: string;
+                year?: number | null;
+                status?: string;
+                state?: string;
+                page?: number;
             };
             header?: never;
             path?: never;
@@ -1090,7 +1408,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["DocumentRow"][];
+                    "application/json": components["schemas"]["SearchPage"];
                 };
             };
             /** @description Validation Error */
@@ -1365,6 +1683,41 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["DocumentView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reading_api_v1_documents__document_id__reading_get: {
+        parameters: {
+            query?: {
+                text?: string;
+                part?: number;
+                at?: string;
+            };
+            header?: never;
+            path: {
+                document_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TextReading"];
                 };
             };
             /** @description Validation Error */
@@ -1762,6 +2115,60 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Done"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    series_api_v1_series_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeriesRow"][];
+                };
+            };
+        };
+    };
+    series_page_api_v1_series__issuer___family__get: {
+        parameters: {
+            query?: {
+                year?: number | null;
+            };
+            header?: never;
+            path: {
+                issuer: string;
+                family: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeriesPage"];
                 };
             };
             /** @description Validation Error */

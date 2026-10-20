@@ -76,11 +76,36 @@ describe("a document's page", () => {
     expect(manage.getByRole("button", { name: "Assign ID" })).toBeTruthy();
   });
 
-  it("shows the provision tree, and the links and status history", () => {
+  it("shows the provision tree, and the status history with what caused each change", () => {
     render(<DocumentPage view={DOCUMENT} />);
 
-    expect(region("Structure").getByText("Changed 27 Feb 2022")).toBeTruthy();
-    expect(region("Links").getByRole("link", { name: "id:uu:2011:21" })).toBeTruthy();
-    expect(region("Status History").getByText("in_force")).toBeTruthy();
+    const structure = region("Structure");
+    expect(structure.getByText("1 changed by later documents")).toBeTruthy();
+    expect(structure.getByRole("link", { name: "Read the Text" }).getAttribute("href")).toBe("/documents/ojk%3Apojk%3A2019%3A10/read");
+    const history = region("Status History");
+    expect(history.getByText("Berlaku")).toBeTruthy();
+    const amended = history.getByRole("row", { name: /Pasal 1 ayat \(1\)/ });
+    expect(within(amended).getByText("Diubah")).toBeTruthy();
+    expect(within(amended).getByRole("link", { name: "POJK 7/2022" }).getAttribute("href")).toBe("/documents/ojk%3Apojk%3A2022%3A7");
+  });
+
+  it("groups the links by what they mean: what changed this document first, then what it rests on", () => {
+    render(<DocumentPage view={DOCUMENT} />);
+
+    const lineage = region("Lineage");
+    expect(lineage.getAllByRole("heading", { level: 3 }).map((heading) => heading.textContent)).toEqual(["Diubah oleh (1)", "Dasar hukum (1)"]);
+    expect(lineage.getByRole("link", { name: "POJK 7/2022" })).toBeTruthy();
+    expect(lineage.getByText("The document, and Pasal 1 ayat (1)")).toBeTruthy();
+    expect(lineage.getByText("Effective 27 Feb 2022")).toBeTruthy();
+  });
+
+  it("says how far the record can be trusted: its status's origin, its acquisition, its text and its checks", () => {
+    render(<DocumentPage view={DOCUMENT} />);
+
+    const provenance = within(screen.getByLabelText("Provenance"));
+    expect(provenance.getByText((_, element) => element?.tagName === "DD" && element.textContent === "Berlaku, as ojk states it")).toBeTruthy();
+    expect(provenance.getByText(/last fetched 19 Oct 2026/)).toBeTruthy();
+    expect(provenance.getByText("Self extracted, text layer")).toBeTruthy();
+    expect(provenance.getByText("Held back: Structure")).toBeTruthy();
   });
 });

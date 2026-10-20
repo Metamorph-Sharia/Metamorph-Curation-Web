@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: "Add Document" };
 
 export default function AddDocumentPage() {
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-10">
       <PageHead title="Add Document">
         A document no connector holds. It loads like any connector’s, under its canonical ID, and is published once it
         passes the publish gate.

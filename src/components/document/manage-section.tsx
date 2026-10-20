@@ -4,8 +4,10 @@ import type { DocumentView } from "@/lib/api/types";
 import { ActionForm } from "../action-form";
 import { ReasonField, TextField } from "../fields";
 import { Section } from "../section";
+import { CARD } from "../styles";
 
-const PANEL = "grid content-start gap-4 rounded-ui border border-line bg-surface p-5";
+const PANEL = `${CARD} grid content-start gap-5 p-5 sm:p-6`;
+const DANGER_PANEL = `${PANEL} border-critical/30`;
 
 export function ManageSection({ view }: { view: DocumentView }) {
   const id = view.summary.id;
@@ -14,7 +16,7 @@ export function ManageSection({ view }: { view: DocumentView }) {
       <div className="grid gap-6 lg:grid-cols-2">
         <div className={PANEL}>
           <div className="grid gap-1">
-            <h3 className="font-medium">Assign an ID</h3>
+            <h3 className="font-heading text-xl leading-tight">Assign an ID</h3>
             <p className="text-sm text-muted">Renames the document everywhere. Later loads of its source records keep the new ID.</p>
           </div>
           <ActionForm action={assignId.bind(null, id)} submit="Assign ID" busy="Assigning…">
@@ -26,7 +28,7 @@ export function ManageSection({ view }: { view: DocumentView }) {
         {view.suppression ? (
           <div className={PANEL}>
             <div className="grid gap-1">
-              <h3 className="font-medium">Restore</h3>
+              <h3 className="font-heading text-xl leading-tight">Restore</h3>
               <p className="text-sm text-muted">Publishes the document again, so the assistant can cite it.</p>
             </div>
             <ActionForm action={restore.bind(null, id)} submit="Restore Document" busy="Restoring…">
@@ -34,9 +36,9 @@ export function ManageSection({ view }: { view: DocumentView }) {
             </ActionForm>
           </div>
         ) : (
-          <div className={PANEL}>
+          <div className={DANGER_PANEL}>
             <div className="grid gap-1">
-              <h3 className="font-medium">Suppress</h3>
+              <h3 className="font-heading text-xl leading-tight text-critical">Suppress</h3>
               <p className="text-sm text-muted">
                 Removes the document from what the assistant can cite. The registry keeps it, and you can restore it.
               </p>

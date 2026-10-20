@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import { Suspense } from "react";
 
 import { CorrectionView } from "@/components/correction-view";
@@ -9,14 +8,22 @@ import { documentHref } from "@/lib/routes";
 
 export const metadata: Metadata = { title: "Text Correction" };
 
+const TITLE = "Text Correction";
+const DOCUMENTS: [string, string] = ["/documents", "Documents"];
+
+// The frame prerenders with the title; the document's citation joins the trail when the changes arrive.
 export default function CorrectionPage({ params }: PageProps<"/documents/[id]/texts/[sha]/correction">) {
   return (
-    <div className="grid gap-6">
-      <PageHead title="Text Correction" />
-      <Suspense fallback={<ListSkeleton />}>
-        <Changes params={params} />
-      </Suspense>
-    </div>
+    <Suspense
+      fallback={
+        <div className="grid gap-8">
+          <PageHead title={TITLE} trail={[DOCUMENTS]} />
+          <ListSkeleton />
+        </div>
+      }
+    >
+      <Changes params={params} />
+    </Suspense>
   );
 }
 
@@ -24,12 +31,8 @@ async function Changes({ params }: Pick<PageProps<"/documents/[id]/texts/[sha]/c
   const { id, sha } = await params;
   const diff = await correction(decodeURIComponent(id), sha);
   return (
-    <div className="grid gap-4">
-      <p className="text-sm">
-        <Link href={documentHref(diff.correction.document_id, "content")} className="text-accent underline-offset-4 hover:underline">
-          {diff.correction.citation}
-        </Link>
-      </p>
+    <div className="grid gap-8">
+      <PageHead title={TITLE} trail={[DOCUMENTS, [documentHref(diff.correction.document_id, "content"), diff.correction.citation]]} />
       <CorrectionView diff={diff} />
     </div>
   );

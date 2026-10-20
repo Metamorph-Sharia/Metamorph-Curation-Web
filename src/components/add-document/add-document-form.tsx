@@ -5,7 +5,7 @@ import { type FormEvent, startTransition, useActionState, useEffect, useRef, use
 import { addDocument, requestUpload } from "@/app/(console)/documents/new/actions";
 import { NOTHING_YET } from "@/lib/action-state";
 
-import { button } from "../action-form";
+import { button, CARD } from "../styles";
 import { markSaved, markUnsaved } from "../unsaved";
 import { ManualFields } from "./manual-fields";
 
@@ -67,7 +67,7 @@ export function AddDocumentForm() {
       ref={formRef}
       onSubmit={send}
       onInput={() => markUnsaved(self)}
-      className="grid max-w-3xl gap-6"
+      className={`${CARD} grid max-w-3xl gap-6 p-5 sm:p-8`}
       aria-describedby={state.error ? "add-error" : undefined}
     >
       <ManualFields errors={errors} />

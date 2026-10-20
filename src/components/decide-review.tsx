@@ -3,6 +3,7 @@
 import { decideReview } from "@/app/(console)/actions";
 
 import { ActionForm } from "./action-form";
+import { button, CONTROL } from "./styles";
 
 // Resolve or dismiss a review item, with a note the next reviewer reads; then back to `back`.
 export function DecideReview({ itemId, back }: { itemId: number; back: string }) {
@@ -20,7 +21,7 @@ export function DecideReview({ itemId, back }: { itemId: number; back: string })
           type="submit"
           name="state"
           value="dismissed"
-          className="rounded-ui border border-line-strong px-3.5 py-2 text-sm font-medium transition-colors hover:bg-sunken active:translate-y-px"
+          className={button("quiet")}
         >
           Dismiss
         </button>
@@ -36,7 +37,7 @@ export function DecideReview({ itemId, back }: { itemId: number; back: string })
           required
           autoComplete="off"
           placeholder="What you checked, and what you found…"
-          className="w-full rounded-ui border border-line-strong bg-surface px-3 py-2 text-sm placeholder:text-muted"
+          className={CONTROL}
         />
       </div>
     </ActionForm>

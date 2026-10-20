@@ -10,7 +10,7 @@ export const metadata: Metadata = { title: "Held Documents" };
 
 export default function HeldPage({ searchParams }: PageProps<"/held">) {
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-10">
       <PageHead title="Held Documents">
         Documents the publish gate holds back. Each stays out of what the assistant reads, or keeps its last good
         version, until it passes its checks or a curator approves its problems as they are.

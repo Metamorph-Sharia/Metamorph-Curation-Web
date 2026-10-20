@@ -13,7 +13,7 @@ const FIRST_QUEUE = "conflict";
 
 export default function ReviewPage({ searchParams }: PageProps<"/review">) {
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-10">
       <PageHead title="Review">Items the platform can’t settle on its own. Each decision is recorded with your note.</PageHead>
       <Suspense fallback={<ListSkeleton />}>
         <Review searchParams={searchParams} />

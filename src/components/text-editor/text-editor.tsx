@@ -1,5 +1,6 @@
 "use client";
 
+import { EditorSelection } from "@codemirror/state";
 import { EditorView, basicSetup } from "codemirror";
 import { useEffect, useRef } from "react";
 
@@ -16,18 +17,23 @@ const LOOK = EditorView.theme({
 
 // The text to correct, in CodeMirror: fast on a megabyte of wording, with a paged text's page markers kept as
 // they are. The form gets the wording once, when it is submitted (its `formdata` event), not on every keystroke.
-// Leaving with unsaved edits asks first.
+// Leaving with unsaved edits asks first. Opened on a provision (`selection`, from the reader), it selects that
+// provision's wording and scrolls to it.
 export default function TextEditor({
   initial,
   paged,
   name,
   labelledBy,
+  selection = null,
 }: {
   initial: string;
   paged: boolean;
   name: string;
   labelledBy: string;
+  selection?: [number, number] | null;
 }) {
+  const [from, to] = selection ?? [0, 0];
+  const selected = selection !== null;
   const host = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -36,6 +42,7 @@ export default function TextEditor({
     const view = new EditorView({
       parent,
       doc: initial,
+      selection: selected ? EditorSelection.single(from, to) : undefined,
       extensions: [
         basicSetup,
         EditorView.lineWrapping,
@@ -47,6 +54,10 @@ export default function TextEditor({
         }),
       ],
     });
+    if (selected) {
+      view.dispatch({ effects: EditorView.scrollIntoView(from, { y: "start", yMargin: 48 }) });
+      view.focus();
+    }
     const form = parent.closest("form");
     const submit = (event: FormDataEvent) => {
       event.formData.set(name, view.state.doc.toString());
@@ -64,7 +75,7 @@ export default function TextEditor({
       window.removeEventListener("beforeunload", leaving);
       view.destroy();
     };
-  }, [initial, paged, name, labelledBy]);
+  }, [initial, paged, name, labelledBy, selected, from, to]);
 
-  return <div ref={host} className="overflow-hidden rounded-ui border border-line-strong" />;
+  return <div ref={host} className="overflow-hidden rounded-ui border border-line-strong bg-surface" />;
 }

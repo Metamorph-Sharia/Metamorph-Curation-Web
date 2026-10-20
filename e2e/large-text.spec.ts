@@ -42,3 +42,19 @@ test("a 1.8 MB paged text is added, opened in the editor, corrected at its end, 
   console.log(`editor open with 1.8 MB: ${opened} ms`);
   expect(opened).toBeLessThan(5_000);
 });
+
+test("the 1.8 MB text is read a part at a time, and the outline reaches its last article", async ({ page }) => {
+  const started = Date.now();
+  await page.goto("/documents/id%3Auu%3A2023%3A6/read");
+  await expect(page.getByRole("region", { name: "Pasal 1", exact: true })).toBeVisible();
+  const opened = Date.now() - started;
+  await expect(page.getByRole("navigation", { name: "Parts of the text" }).first()).toContainText(/Part 1 of \d+/);
+
+  await page.getByRole("navigation", { name: "Outline" }).getByRole("link", { name: `Pasal ${PAGES}`, exact: true }).click();
+
+  await expect(page).toHaveURL(new RegExp(`part=\\d+#pasal-${PAGES}$`));
+  await expect(page.getByRole("region", { name: `Pasal ${PAGES}`, exact: true })).toContainText("diatur lebih lanjut.");
+  await expect(page.getByRole("article", { name: "Text" })).toContainText("Ditetapkan di Jakarta."); // the closing, after it
+  console.log(`reader open with 1.8 MB: ${opened} ms`);
+  expect(opened).toBeLessThan(5_000);
+});

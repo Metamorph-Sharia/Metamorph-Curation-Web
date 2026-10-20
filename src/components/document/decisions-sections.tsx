@@ -4,19 +4,23 @@ import { formatDay, formatValue } from "@/lib/format";
 import { fieldLabel, reviewQueueLabel, sentence } from "@/lib/labels";
 import { documentHref } from "@/lib/routes";
 
-import { ActionForm, button } from "../action-form";
+import { ActionForm } from "../action-form";
 import { DecideReview } from "../decide-review";
+import { Empty } from "../empty";
 import { ReasonField, TextField } from "../fields";
 import { Section } from "../section";
+import { button, CARD } from "../styles";
 
-const ITEM = "grid gap-4 p-4 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)]";
-const LIST = "divide-y divide-line rounded-ui border border-line bg-surface";
+// Each item a card: what it is on the left, the decision about it on the right (beneath, on narrow screens).
+const ITEM = `${CARD} grid gap-5 p-4 sm:p-5 lg:grid-cols-[minmax(0,1fr)_minmax(0,24rem)] lg:gap-8`;
+const LIST = "grid gap-3";
+const SECTION_NOTE = "max-w-[75ch] text-sm text-muted text-pretty";
 
 export function CitationsSection({ view }: { view: DocumentView }) {
   const id = view.summary.id;
   return (
     <Section id="citations" title="Open Citations">
-      <p className="max-w-[75ch] text-sm text-muted">
+      <p className={SECTION_NOTE}>
         Citations not linked to a document yet. Most wait for their target to be loaded; link one by hand when the
         registry holds it under a name the platform can’t match.
       </p>
@@ -24,12 +28,14 @@ export function CitationsSection({ view }: { view: DocumentView }) {
         <ul className={LIST}>
           {view.open_citations.map((citation) => (
             <li key={citation.id} className={ITEM}>
-              <div className="grid content-start gap-1 text-sm">
+              <div className="grid content-start gap-2 text-sm">
                 <p>
                   <strong className="font-medium">{sentence(citation.relation)}</strong>
                   {citation.from_address ? <span className="text-muted"> from {citation.from_address}</span> : null}
                 </p>
-                <p className="break-words">“{citation.target_text}”</p>
+                <blockquote className="break-words border-l-2 border-line-strong pl-3 font-heading text-lg leading-snug">
+                  “{citation.target_text}”
+                </blockquote>
                 <p className="text-xs text-muted">
                   {citation.target_id ? (
                     <>
@@ -55,7 +61,7 @@ export function CitationsSection({ view }: { view: DocumentView }) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-muted">Every citation of this document is linked.</p>
+        <Empty>Every citation of this document is linked.</Empty>
       )}
     </Section>
   );
@@ -69,10 +75,18 @@ export function ConflictsSection({ view }: { view: DocumentView }) {
         <ul className={LIST}>
           {view.conflicts.map((conflict) => (
             <li key={conflict.id} className={ITEM}>
-              <div className="grid content-start gap-1 text-sm">
+              <div className="grid content-start gap-2 text-sm">
                 <p className="font-medium">{fieldLabel(conflict.field)}</p>
-                <p>Your correction: “{formatValue(conflict.correction)}”</p>
-                <p>The source now says: “{formatValue(conflict.source_value)}”</p>
+                <dl className="grid gap-2">
+                  <div className="grid gap-0.5">
+                    <dt className="text-xs text-muted">Your correction</dt>
+                    <dd>“{formatValue(conflict.correction)}”</dd>
+                  </div>
+                  <div className="grid gap-0.5">
+                    <dt className="text-xs text-muted">The source now says</dt>
+                    <dd>“{formatValue(conflict.source_value)}”</dd>
+                  </div>
+                </dl>
                 <p className="text-xs text-muted">Detected {formatDay(conflict.detected_at)}</p>
               </div>
               <ActionForm
@@ -94,7 +108,7 @@ export function ConflictsSection({ view }: { view: DocumentView }) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-muted">No source disagrees with a correction of this document.</p>
+        <Empty>No source disagrees with a correction of this document.</Empty>
       )}
     </Section>
   );
@@ -107,9 +121,9 @@ export function ReviewItemsSection({ view }: { view: DocumentView }) {
         <ul className={LIST}>
           {view.open_reviews.map((item) => (
             <li key={item.id} className={ITEM}>
-              <div className="grid content-start gap-1 text-sm">
+              <div className="grid content-start gap-2 text-sm">
                 <p className="font-medium">{reviewQueueLabel(item.kind)}</p>
-                <p>{item.summary}</p>
+                <p className="text-pretty">{item.summary}</p>
                 <p className="text-xs text-muted">Waiting since {formatDay(item.created_at)}</p>
               </div>
               <DecideReview itemId={item.id} back={`${documentHref(view.summary.id)}#review`} />
@@ -117,7 +131,7 @@ export function ReviewItemsSection({ view }: { view: DocumentView }) {
           ))}
         </ul>
       ) : (
-        <p className="text-sm text-muted">Nothing about this document waits for review.</p>
+        <Empty>Nothing about this document waits for review.</Empty>
       )}
     </Section>
   );

@@ -4,6 +4,7 @@ import { type FormEvent, type ReactNode, startTransition, useActionState, useEff
 
 import { type ActionState, NOTHING_YET } from "@/lib/action-state";
 
+import { button } from "./styles";
 import { markSaved, markUnsaved } from "./unsaved";
 
 type Action = (state: ActionState, form: FormData) => Promise<ActionState>;
@@ -65,16 +66,4 @@ export function ActionForm({
       </div>
     </form>
   );
-}
-
-export function button(tone: "primary" | "quiet" | "danger"): string {
-  const base =
-    "rounded-ui px-3.5 py-2 text-sm font-medium transition-colors active:translate-y-px disabled:opacity-70 whitespace-nowrap";
-  if (tone === "danger") {
-    return `${base} bg-critical text-surface hover:opacity-90`;
-  }
-  if (tone === "quiet") {
-    return `${base} border border-line-strong hover:bg-sunken`;
-  }
-  return `${base} bg-accent text-on-accent hover:bg-accent-hover`;
 }

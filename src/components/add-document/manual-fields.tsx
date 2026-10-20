@@ -1,6 +1,7 @@
 import { sentence } from "@/lib/labels";
 
 import { FieldError, SelectField, TextField } from "../fields";
+import { CONTROL } from "../styles";
 
 // The contract's kinds and statuses, and the rights a manual document may have.
 const KINDS = ["law", "regulation", "implementing_rule", "fatwa", "guideline", "circular", "explanatory"];
@@ -40,7 +41,7 @@ export function ManualFields({ errors }: { errors: Record<string, string> }) {
         code
         error={errors.source_url}
       />
-      <fieldset className="grid gap-3">
+      <fieldset className="grid gap-3 border-t border-line pt-5">
         <legend className="text-sm font-medium">Dates</legend>
         <p className="text-xs text-muted">Leave a date empty when the document doesn’t state it.</p>
         <div className="grid gap-4 md:grid-cols-3">
@@ -65,7 +66,7 @@ export function ManualFields({ errors }: { errors: Record<string, string> }) {
           required
           aria-invalid={errors.file ? true : undefined}
           aria-describedby={errors.file ? "file-error" : "file-help"}
-          className="text-sm file:mr-3 file:rounded-ui file:border file:border-line-strong file:bg-surface file:px-3 file:py-1.5 file:text-sm"
+          className="rounded-ui border border-dashed border-line-strong bg-bg p-3 text-sm text-muted file:mr-3 file:min-h-10 file:cursor-pointer file:rounded-ui file:border file:border-line-strong file:bg-surface file:px-4 file:text-sm file:font-medium file:text-text file:transition-colors hover:file:bg-sunken aria-[invalid=true]:border-critical"
         />
         <p id="file-help" className="text-xs text-muted">
           Usually the official PDF, up to 100&nbsp;MB. It goes straight to the object store.
@@ -82,7 +83,7 @@ export function ManualFields({ errors }: { errors: Record<string, string> }) {
           rows={8}
           spellCheck={false}
           placeholder="Paste the document’s text if you have it; it is parsed at once…"
-          className="w-full rounded-ui border border-line-strong bg-surface px-3 py-2 font-mono text-sm placeholder:text-muted"
+          className={`${CONTROL} font-mono`}
         />
         <FieldError id="text" error={errors.text} />
       </div>
