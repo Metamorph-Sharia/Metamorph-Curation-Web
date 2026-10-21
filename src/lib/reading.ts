@@ -1,15 +1,16 @@
-// How the reader presents a text the parser cut: the outline beside it, the gaps in its numbering, its pages,
-// and a provision cited as lawyers cite it. Pure rules, so the reader's view only lays them out.
+// How the reader presents a text the parser cut: the outline beside it, the gaps in its numbering,
+// its paragraphs and their links and pages, and a provision cited as lawyers cite it. Pure rules, so the reader's
+// view only lays them out.
 import { addressLabel } from "./legal";
 
 type Provision = { address: string; kind: string; label: string; parent_address: string | null };
 
 // They group articles without starting a new numbering (the platform's CONTAINER_KINDS).
 const CONTAINERS = new Set(["bab", "bagian", "paragraf", "memutuskan", "pengesahan"]);
-const NOT_IN_OUTLINE = new Set(["ayat"]); // too many to jump between: an article's paragraphs are on its screen
+// Too many to jump between: an article's paragraphs and items (huruf, angka) are on its screen
+const NOT_IN_OUTLINE = new Set(["ayat", "huruf", "angka"]);
 const ARTICLE_NUMBER = /^Pasal (\d+)([A-Z]*)$/; // Pasal 4, Pasal 4A: an inserted article keeps the numbering
 const AMENDING_ARTICLE = /^pasal-[ivxlc]+$/;
-const PAGE_MARKER = /^<!-- page (\d+) -->$/gm;
 
 // "Pasal 5 ayat (1) POJK 10/POJK.05/2019". An article an amending regulation words anew is cited within its
 // amending article: "Pasal 115 dalam Pasal I POJK 7/POJK.05/2022".
@@ -54,26 +55,6 @@ export function outline<T extends Provision>(provisions: T[]): T[] {
   return provisions.filter((each) => !NOT_IN_OUTLINE.has(each.kind));
 }
 
-export type Piece = { text: string } | { page: number };
-
-// A passage's text cut at its page markers (`<!-- page N -->`, a paged text's convention), so the reader can show
-// where each page of the official file starts.
-export function pieces(text: string): Piece[] {
-  const cut: Piece[] = [];
-  let cursor = 0;
-  for (const marker of text.matchAll(PAGE_MARKER)) {
-    if (marker.index > cursor) {
-      cut.push({ text: text.slice(cursor, marker.index) });
-    }
-    cut.push({ page: Number(marker[1]) });
-    cursor = marker.index + marker[0].length;
-  }
-  if (cursor < text.length || !cut.length) {
-    cut.push({ text: text.slice(cursor) });
-  }
-  return cut;
-}
-
 const RANGE = /^(\d+)-(\d+)$/;
 
 // The editor's `at` (editHref): a provision's range in the text, or null when it isn't one that fits.
@@ -87,22 +68,49 @@ export function editRange(at: string | undefined, length: number): [number, numb
 }
 
 type Reference = { start: number; end: number; address: string };
-export type LinkedPiece = { text: string; address?: string };
+type BlockWording = { text: string; references: Reference[]; pages: { at: number; page: number }[] };
+export type BlockPiece = { text: string; address?: string } | { page: number };
 
-// A passage's wording cut at its references to the text's other provisions ("Pasal 19 ayat (2)"), so each can be a
-// link. The API gives the offsets in UTF-16 units, as JavaScript strings count.
-export function linkedPieces(text: string, references: Reference[]): LinkedPiece[] {
-  const cut: LinkedPiece[] = [];
+// A block's wording cut at its references to the text's other provisions ("Pasal 19 ayat (2)"), so each can be a
+// link, and where a page of the official file starts in it. The API gives offsets in UTF-16 units, as JavaScript
+// strings count.
+export function blockPieces(block: BlockWording): BlockPiece[] {
+  const cut: BlockPiece[] = [];
   let cursor = 0;
-  for (const reference of references) {
-    if (reference.start > cursor) {
-      cut.push({ text: text.slice(cursor, reference.start) });
+  let next = 0; // the next page start
+  const textUpTo = (end: number) => {
+    if (end > cursor) {
+      cut.push({ text: block.text.slice(cursor, end) });
+      cursor = end;
     }
-    cut.push({ text: text.slice(reference.start, reference.end), address: reference.address });
+  };
+  const pagesUpTo = (position: number) => {
+    for (; next < block.pages.length && block.pages[next].at <= position; next++) {
+      textUpTo(block.pages[next].at);
+      cut.push({ page: block.pages[next].page });
+    }
+  };
+  for (const reference of block.references) {
+    pagesUpTo(reference.start);
+    textUpTo(reference.start);
+    cut.push({ text: block.text.slice(reference.start, reference.end), address: reference.address });
     cursor = reference.end;
   }
-  if (cursor < text.length || !cut.length) {
-    cut.push({ text: text.slice(cursor) });
-  }
+  pagesUpTo(block.text.length);
+  textUpTo(block.text.length);
   return cut;
+}
+
+type Placed = { address: string | null };
+
+// A paragraph (ayat) right after another of the same article: ruled off from it, as the article's parts.
+export function followsSibling(passages: Placed[], index: number, byAddress: Map<string, Provision>): boolean {
+  const provision = (at: number) => (at >= 0 && passages[at].address ? byAddress.get(passages[at].address!) : undefined);
+  const [previous, current] = [provision(index - 1), provision(index)];
+  return (
+    current?.kind === "ayat" &&
+    previous?.kind === "ayat" &&
+    previous.address !== current.address &&
+    previous.parent_address === current.parent_address
+  );
 }

@@ -63,5 +63,9 @@ test("the official PDF opens beside the text on a wide screen", async ({ page })
   await expect(page.locator('iframe[name="pdf-view"]')).toBeVisible();
   const second = page.getByRole("region", { name: "Pasal 2", exact: true });
   await expect(second.getByRole("link", { name: "Page 2" })).toHaveAttribute("target", "pdf-view");
-  await expect(page.getByRole("separator").getByRole("link", { name: "Page 2" })).toHaveAttribute("target", "pdf-view");
+  const pageTwo = page.getByRole("article", { name: "Text" }).getByRole("link", { name: "Page 2" });
+  await expect(pageTwo).toHaveCount(2); // Pasal 2's own, and where page 2 starts in the text, after Pasal 1
+  for (const link of await pageTwo.all()) {
+    await expect(link).toHaveAttribute("target", "pdf-view");
+  }
 });

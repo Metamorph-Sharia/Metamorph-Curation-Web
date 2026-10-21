@@ -1,5 +1,5 @@
 // Curation data as the API answers it, typed by the contract: what the view tests render.
-import type { DocumentView, HeldPage, ReadingProvision, ReviewPage, SearchPage, TextReading } from "@/lib/api/types";
+import type { DocumentView, HeldPage, ReadingBlock, ReadingProvision, ReviewPage, SearchPage, TextReading } from "@/lib/api/types";
 
 export const NOW = "2026-10-19T04:36:00+00:00";
 export const DOC = "ojk:pojk:2019:10";
@@ -99,6 +99,15 @@ export const DOCUMENT: DocumentView = {
   lapsed_corrections: ["d".repeat(64)],
 };
 
+const block = (text: string, extra: Partial<ReadingBlock> = {}): ReadingBlock => ({
+  text,
+  marker: null,
+  depth: 0,
+  pages: [],
+  references: [],
+  ...extra,
+});
+
 const reading = (address: string, kind: string, label: string, part: number, extra: Partial<ReadingProvision> = {}): ReadingProvision => ({
   address,
   parent_address: null,
@@ -137,22 +146,31 @@ export const READING: TextReading = {
       valid_to: "2021-03-03",
       changes: [{ type: "amends", document_id: "ojk:pojk:2021:3", citation: "POJK 3/POJK.05/2021", effective_on: "2021-03-03", new_address: "pasal-i/pasal-3" }],
     }),
+    reading("pasal-3/ayat-1", "ayat", "(1)", 0, { parent_address: "pasal-3", depth: 2 }),
+    reading("pasal-3/ayat-2", "ayat", "(2)", 0, { parent_address: "pasal-3", depth: 2 }),
     reading("pasal-4", "pasal", "Pasal 4", 1),
   ],
   passages: [
-    { address: null, text: "PERATURAN OTORITAS JASA KEUANGAN\n", opens: false, titled: false, references: [] },
-    { address: "bab-i", text: "", opens: true, titled: true, references: [] },
-    { address: "pasal-1", text: "Satu.\n<!-- page 2 -->\nLanjutan.\n", opens: true, titled: true, references: [] },
+    { address: null, opens: false, titled: false, blocks: [block("PERATURAN OTORITAS JASA KEUANGAN")] },
+    { address: "bab-i", opens: true, titled: true, blocks: [] },
+    { address: "pasal-1", opens: true, titled: true, blocks: [block("Satu dan lanjutan.", { pages: [{ at: 9, page: 2 }] })] },
+    { address: "pasal-3", opens: true, titled: true, blocks: [] },
     {
-      address: "pasal-3",
-      text: "Tiga, menurut Pasal 1 dan Pasal 4.\n",
+      address: "pasal-3/ayat-1",
       opens: true,
-      titled: true,
-      references: [
-        { start: 14, end: 21, address: "pasal-1" },
-        { start: 26, end: 33, address: "pasal-4" },
+      titled: false,
+      blocks: [
+        block("Tiga, menurut Pasal 1 dan Pasal 4:", {
+          marker: "(1)",
+          references: [
+            { start: 14, end: 21, address: "pasal-1" },
+            { start: 26, end: 33, address: "pasal-4" },
+          ],
+        }),
+        block("pertama;", { marker: "a.", depth: 1 }),
       ],
     },
+    { address: "pasal-3/ayat-2", opens: true, titled: false, blocks: [block("Lain.", { marker: "(2)" })] },
   ],
 };
 

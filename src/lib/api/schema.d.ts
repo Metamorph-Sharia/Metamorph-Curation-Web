@@ -949,9 +949,16 @@ export interface components {
              */
             reason: string;
         };
+        /** PageStart */
+        PageStart: {
+            /** At */
+            at: number;
+            /** Page */
+            page: number;
+        };
         /**
          * PassageReference
-         * @description A reference in a passage to another provision of the same text ("Pasal 19 ayat (2)").
+         * @description A reference in a block to another provision of the same text ("Pasal 19 ayat (2)").
          */
         PassageReference: {
             /** Address */
@@ -1005,12 +1012,23 @@ export interface components {
             /** Sha256 */
             sha256: string;
         };
-        /** ReadingPassage */
-        ReadingPassage: {
-            /** Address */
-            address: string | null;
-            /** Opens */
-            opens: boolean;
+        /**
+         * ReadingBlock
+         * @description A paragraph or a list item of a passage, its printed lines joined (domain/layout.py).
+         */
+        ReadingBlock: {
+            /**
+             * Depth
+             * @default 0
+             */
+            depth: number;
+            /** Marker */
+            marker?: string | null;
+            /**
+             * Pages
+             * @default []
+             */
+            pages: components["schemas"]["PageStart"][];
             /**
              * References
              * @default []
@@ -1018,6 +1036,18 @@ export interface components {
             references: components["schemas"]["PassageReference"][];
             /** Text */
             text: string;
+        };
+        /** ReadingPassage */
+        ReadingPassage: {
+            /** Address */
+            address: string | null;
+            /**
+             * Blocks
+             * @default []
+             */
+            blocks: components["schemas"]["ReadingBlock"][];
+            /** Opens */
+            opens: boolean;
             /** Titled */
             titled: boolean;
         };

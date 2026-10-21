@@ -9,6 +9,8 @@ describe("a provision's address, as a lawyer writes it", () => {
     expect(addressLabel("pasal-115")).toBe("Pasal 115");
     expect(addressLabel("pasal-3a")).toBe("Pasal 3A");
     expect(addressLabel("pasal-5/ayat-1")).toBe("Pasal 5 ayat (1)");
+    expect(addressLabel("pasal-5/ayat-1/huruf-a")).toBe("Pasal 5 ayat (1) huruf a");
+    expect(addressLabel("pasal-1/angka-3/huruf-b")).toBe("Pasal 1 angka 3 huruf b");
     expect(addressLabel("pasal-i")).toBe("Pasal I");
     expect(addressLabel("pasal-i/pasal-115")).toBe("Pasal 115 (Pasal I)");
   });

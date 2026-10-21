@@ -23,6 +23,7 @@ export type TextReading = Schemas["TextReading"];
 export type ReadingProvision = Schemas["ReadingProvision"];
 export type ProvisionChange = Schemas["ProvisionChange"];
 export type Passage = Schemas["ReadingPassage"];
+export type ReadingBlock = Schemas["ReadingBlock"];
 export type SearchPage = Schemas["SearchPage"];
 export type DocumentHit = Schemas["DocumentHit"];
 export type ArticleHit = Schemas["ArticleHit"];

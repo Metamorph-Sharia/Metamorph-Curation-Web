@@ -11,6 +11,8 @@ import { sentence } from "./labels";
 const PARTS: [RegExp, (value: string) => string][] = [
   [/^pasal-(.+)$/, (n) => `Pasal ${n.toUpperCase()}`],
   [/^ayat-(.+)$/, (n) => `ayat (${n})`],
+  [/^huruf-(.+)$/, (n) => `huruf ${n}`],
+  [/^angka-(.+)$/, (n) => `angka ${n}`],
   [/^bab-(.+)$/, (n) => `BAB ${n.toUpperCase()}`],
   [/^bagian-(.+)$/, (n) => `Bagian ${sentence(n)}`],
   [/^paragraf-(.+)$/, (n) => `Paragraf ${n.toUpperCase()}`],

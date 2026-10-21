@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { articleGaps, editRange, formalCitation, linkedPieces, outline, pieces } from "./reading";
+import { articleGaps, blockPieces, editRange, followsSibling, formalCitation, outline } from "./reading";
 import { editHref, readerHref } from "./routes";
 
 describe("where the reader is", () => {
@@ -63,26 +63,17 @@ describe("the articles the parser didn't find", () => {
 });
 
 describe("the outline beside the text", () => {
-  it("lists the parts a curator jumps to, not every paragraph", () => {
+  it("lists the parts a curator jumps to, not every paragraph or item", () => {
     const listed = outline([
       provision("menimbang", "menimbang", "Menimbang"),
+      provision("menimbang/huruf-a", "huruf", "a.", "menimbang"),
       provision("bab-i", "bab", "BAB I"),
       provision("pasal-1", "pasal", "Pasal 1", "bab-i"),
       provision("pasal-1/ayat-1", "ayat", "(1)", "pasal-1"),
+      provision("pasal-1/ayat-1/angka-1", "angka", "1.", "pasal-1/ayat-1"),
     ]);
 
     expect(listed.map((each) => each.address)).toEqual(["menimbang", "bab-i", "pasal-1"]);
-  });
-});
-
-describe("a passage's text, with its page markers", () => {
-  it("is cut at each page marker, so the reader shows where each page starts", () => {
-    expect(pieces("Satu.\n<!-- page 2 -->\nDua.\n")).toEqual([
-      { text: "Satu.\n" },
-      { page: 2 },
-      { text: "\nDua.\n" },
-    ]);
-    expect(pieces("Tanpa halaman.")).toEqual([{ text: "Tanpa halaman." }]);
   });
 });
 
@@ -96,21 +87,53 @@ describe("where the editor opens", () => {
   });
 });
 
-describe("a passage's references to other provisions", () => {
-  it("cuts the wording at each reference, by the API's offsets (as the browser counts)", () => {
-    const text = "Tiga 😀 menurut ayat (1) dan Pasal 2.";
-    const references = [
-      { start: 16, end: 24, address: "pasal-2/ayat-1" }, // 😀 takes two units
-      { start: 29, end: 36, address: "pasal-2" },
-    ];
+describe("a block's wording, with its references and the pages it runs over", () => {
+  it("cuts the wording at each reference and each page start, by the API's offsets (as the browser counts)", () => {
+    const block = {
+      text: "Tiga 😀 menurut ayat (1) dan Pasal 2.",
+      references: [
+        { start: 16, end: 24, address: "pasal-2/ayat-1" }, // 😀 takes two units
+        { start: 29, end: 36, address: "pasal-2" },
+      ],
+      pages: [{ at: 25, page: 4 }],
+    };
 
-    expect(linkedPieces(text, references)).toEqual([
+    expect(blockPieces(block)).toEqual([
       { text: "Tiga 😀 menurut " },
       { text: "ayat (1)", address: "pasal-2/ayat-1" },
-      { text: " dan " },
+      { text: " " },
+      { page: 4 },
+      { text: "dan " },
       { text: "Pasal 2", address: "pasal-2" },
       { text: "." },
     ]);
-    expect(linkedPieces("Tanpa rujukan.", [])).toEqual([{ text: "Tanpa rujukan." }]);
+  });
+
+  it("is the whole wording when there is nothing to cut at, and a page may start it", () => {
+    expect(blockPieces({ text: "Tanpa rujukan.", references: [], pages: [] })).toEqual([{ text: "Tanpa rujukan." }]);
+    expect(blockPieces({ text: "Lanjutan.", references: [], pages: [{ at: 0, page: 2 }] })).toEqual([
+      { page: 2 },
+      { text: "Lanjutan." },
+    ]);
+  });
+});
+
+describe("an article's paragraphs", () => {
+  const provisions = [
+    { address: "menimbang", kind: "menimbang", label: "Menimbang", parent_address: null },
+    { address: "memutuskan", kind: "memutuskan", label: "MEMUTUSKAN", parent_address: null },
+    { address: "bab-i", kind: "bab", label: "BAB I", parent_address: null },
+    { address: "pasal-1", kind: "pasal", label: "Pasal 1", parent_address: "bab-i" },
+    { address: "pasal-1/ayat-1", kind: "ayat", label: "(1)", parent_address: "pasal-1" },
+    { address: "pasal-1/ayat-2", kind: "ayat", label: "(2)", parent_address: "pasal-1" },
+    { address: "pasal-2/ayat-1", kind: "ayat", label: "(1)", parent_address: "pasal-2" },
+  ];
+  const at = (...addresses: (string | null)[]) => addresses.map((address) => ({ address }));
+
+  it("rules a paragraph off from the one before it in the same article", () => {
+    const passages = at("pasal-1", "pasal-1/ayat-1", "pasal-1/ayat-2", "pasal-2/ayat-1");
+    const byAddress = new Map(provisions.map((each) => [each.address, each]));
+
+    expect(passages.map((_, index) => followsSibling(passages, index, byAddress))).toEqual([false, false, true, false]);
   });
 });
