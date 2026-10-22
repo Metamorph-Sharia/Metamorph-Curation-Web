@@ -10,8 +10,9 @@ The console has no data or rules of its own. Everything it shows and every chang
 
 | Page | What a curator does there |
 |---|---|
-| **Overview** `/` | Sees what the publish gate holds back, what waits for review, ingestion health, the registry and the latest loads |
+| **Overview** `/` | Sees what the publish gate holds back, what waits for review (numbering gaps included), ingestion health, the registry and the latest loads |
 | **Held** `/held?check=` | Works through the documents the publish gate holds back, filtered by check. Those whose last good version is still published come first |
+| **Gaps** `/gaps` | Works through the published documents whose text skips an article or a paragraph. Each gap opens in the reader at the provision it names; correcting the text or approving the gaps as they are clears them |
 | **Review** `/review?kind=` | Resolves or dismisses conflicts, unlinked citations and quarantined lines, each with a note |
 | **Documents** `/documents?q=&kind=&issuer=&family=&year=&status=&state=` | Finds documents by ID, citation, title, alias or words in their published text, and the matching articles (`kind=articles`), with filters and their counts. Without a query, lists every document the filters leave |
 | **Browse** `/browse`, `/browse/{issuer}/{family}?year=` | Every series the registry holds; a series by year and number, with the numbers not held marked |
@@ -42,6 +43,8 @@ browser ──▶ S3, only through short-lived links the API signs (opening a fi
 | `src/components/` | The views (plain data in, markup out), and the forms: `ActionForm` for every action, the text editor (`text-editor/`, loaded on its page only), and the add-document form (`add-document/`) |
 
 Dependencies point one way: `app/` → `components/` and `lib/`. Only `lib/api/` knows the API exists, and views never import it.
+
+The texts the console shows were extracted from the official PDFs by [MinerU](https://github.com/opendatalab/MinerU) (the platform's `metamorph-pdf-text`). Its license asks a service that uses it to say so visibly, so the footer reads "Text extraction by MinerU".
 
 The visual design is a legal reader's, after [pasal.id](https://pasal.id): warm paper, white cards with hairline borders, one deep-green accent, an 8px radius, and light and dark modes from the same tokens (`src/app/globals.css`). Headings are set in Instrument Serif, text in Instrument Sans, IDs and code in Geist Mono. The shared looks (card, control, link, button, notice) are class lists in `src/components/styles.ts`.
 
@@ -85,7 +88,7 @@ npm run test:e2e            # Playwright: every page and action, on a production
 **The end-to-end tests change data, so they run in a world of their own:**
 - the `metamorph_e2e` database and the `metamorph-e2e` bucket;
 - the API on port 8012 (`e2e/api.sh`), with a test account;
-- a fresh seed for each spec file (`e2e/seed.sh`, about two seconds), loading `e2e/fixtures/bundle`: one published paged document, the regulation amending it, two held for their structure, and one held for its identity.
+- a fresh seed for each spec file (`e2e/seed.sh`, about two seconds), loading `e2e/fixtures/bundle`: one published paged document, the regulation amending it, one published with a gap to review, one held for its structure (no article found), and one held for its identity.
 
 They need the platform repository beside this one (or `METAMORPH_PLATFORM`), its compose `postgres` and `objectstore`, and `uv`. They include adding and correcting a 1.8 MB text, the longest the platform holds. CI (`.github/workflows/ci.yml`) runs all of the checks.
 
