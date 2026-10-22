@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 import type { Passage, ReadingProvision } from "@/lib/api/types";
-import { formatCount, formatDay } from "@/lib/format";
+import { formatCount, formatDay, formatFirst } from "@/lib/format";
 import { sentence } from "@/lib/labels";
 import { addressLabel, changeLabel } from "@/lib/legal";
 import { articleGaps, followsSibling, formalCitation, outline } from "@/lib/reading";
@@ -13,6 +13,7 @@ import { PageLink, PDF_FRAME, type Place, provisionHref } from "./links";
 import { OutlineSpy } from "./outline-spy";
 import { Wording } from "./wording";
 
+const PROBLEMS_SHOWN = 3; // the rest are marked where they are, and listed on the Gaps page
 const GROUPS = new Set(["bab", "bagian", "paragraf", "lampiran", "penjelasan", "memutuskan"]); // centred, as printed
 const WITHOUT_ACTIONS = new Set(["ayat", "huruf", "angka", "bab", "bagian", "paragraf", "memutuskan", "penjelasan"]);
 const TITLED_IN_OUTLINE = new Set(["bab", "bagian", "paragraf", "lampiran", "romawi", "diktum"]); // title below
@@ -125,7 +126,7 @@ function ReaderHead({ reading, pdfBeside, gapCount }: Place & { gapCount: number
             <strong className="font-semibold text-warning">The parser found problems in this text.</strong> Gaps in the
             article numbering are marked where they are.
           </p>
-          {reading.problems.length ? <p>{reading.problems.join("; ")}</p> : null}
+          {reading.problems.length ? <p>{formatFirst(reading.problems, PROBLEMS_SHOWN)}</p> : null}
         </div>
       ) : null}
     </header>

@@ -2,6 +2,7 @@ import Link from "next/link";
 
 import { approve, withdrawApproval, withdrawTextCorrection } from "@/app/(console)/documents/[id]/actions";
 import type { ContentRow, DocumentView } from "@/lib/api/types";
+import { formatFirst } from "@/lib/format";
 import { contentHref, textHref } from "@/lib/routes";
 
 import { ActionForm } from "../action-form";
@@ -95,17 +96,13 @@ function Structure({ documentId, text }: { documentId: string; text: ContentRow 
       </p>
     );
   }
-  const more = problems.length - PROBLEMS_SHOWN;
   return (
     <div className="grid gap-3 border-t border-line pt-4">
       <p className="flex flex-wrap items-center gap-2 text-sm">
         <Badge tone="warning">
           {problems.length} {problems.length === 1 ? "problem" : "problems"}
         </Badge>
-        <span>
-          {problems.slice(0, PROBLEMS_SHOWN).join("; ")}
-          {more > 0 ? `; and ${more} more` : ""}
-        </span>
+        <span>{formatFirst(problems, PROBLEMS_SHOWN)}</span>
       </p>
       {text.approval ? (
         <>

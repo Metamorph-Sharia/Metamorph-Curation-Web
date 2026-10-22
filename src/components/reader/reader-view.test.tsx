@@ -60,6 +60,13 @@ describe("the reader", () => {
     expect(screen.getByText("Pasal 2 missing")).toBeTruthy();
   });
 
+  it("names a text's first problems and counts the rest, which are marked where they are", () => {
+    const problems = Array.from({ length: 70 }, (_, n) => `Pasal ${n + 2} missing`);
+    render(<ReaderView reading={{ ...READING, problems }} pdfBeside={false} />);
+
+    expect(screen.getByText("Pasal 2 missing; Pasal 3 missing; Pasal 4 missing; and 67 more")).toBeTruthy();
+  });
+
   it("says what changed an article, and links to its new wording", () => {
     render(<ReaderView reading={READING} pdfBeside={false} />);
 
