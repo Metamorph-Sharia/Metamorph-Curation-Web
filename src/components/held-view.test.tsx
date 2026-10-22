@@ -26,7 +26,7 @@ describe("the held list", () => {
       .filter((item) => item.parentElement?.getAttribute("aria-label") === "Held documents")
       .map((item) => within(item));
     expect(first.getByRole("link", { name: DOC }).getAttribute("href")).toBe("/documents/ojk%3Apojk%3A2019%3A10");
-    expect(first.getByText("Structure: Pasal 3 missing")).toBeTruthy();
+    expect(first.getByText("Structure: no Pasal found")).toBeTruthy();
     expect(first.getByText(/Last published 19 Oct 2026: the assistant still sees that version/)).toBeTruthy();
     expect(second.getByText(/Never published/)).toBeTruthy();
   });

@@ -10,32 +10,33 @@ test("the held list says why each document is held, and filters by check", async
   await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Held" }).click();
 
   const held = page.getByRole("list", { name: "Held documents" });
-  await expect(held.getByRole("link", { name: GAPPY.id })).toBeVisible();
+  await expect(held.getByRole("link", { name: TO_CORRECT.id })).toBeVisible();
   await expect(held.getByRole("link", { name: UNIDENTIFIED.id })).toBeVisible();
 
   await page.getByRole("navigation", { name: "Held by check" }).getByRole("link", { name: /Unidentified/ }).click();
 
   await expect(page).toHaveURL("/held?check=identity");
   await expect(held.getByRole("link", { name: UNIDENTIFIED.id })).toBeVisible();
-  await expect(held.getByRole("link", { name: GAPPY.id })).toHaveCount(0);
+  await expect(held.getByRole("link", { name: TO_CORRECT.id })).toHaveCount(0);
 });
 
-test("a curator approves a genuine gap, and the document is published", async ({ page }) => {
-  await page.goto(documentPath(GAPPY.id));
-  const publishing = page.getByRole("status", { name: "Publishing" });
-  await expect(publishing).toContainText("Held back from publishing");
-  await expect(publishing).toContainText("Structure: Pasal 2 missing");
+test("a gap is published, opens in the reader, and leaves the gaps list once approved as genuine", async ({ page }) => {
+  await page.getByRole("navigation", { name: "Main" }).getByRole("link", { name: "Gaps" }).click();
+  await page.getByRole("list", { name: "Documents with gaps" }).getByRole("link", { name: "Pasal 2 missing" }).click();
 
+  await expect(page).toHaveURL(`${documentPath(GAPPY.id)}/read`);
+  await expect(page.getByRole("note").filter({ hasText: "Not in the text: Pasal 2" })).toBeVisible();
+
+  await page.goto(documentPath(GAPPY.id));
+  await expect(page.getByRole("status", { name: "Publishing" })).toHaveCount(0);
   const content = page.getByRole("region", { name: "Files & Texts" });
   await content.getByRole("textbox", { name: "Reason" }).fill("Pasal 2 dicabut oleh POJK 12/2021");
   await content.getByRole("button", { name: "Approve as Is" }).click();
 
   await expect(page.getByRole("status").filter({ hasText: "Approved." })).toBeVisible();
-  await expect(publishing).toHaveCount(0);
   await expect(content.getByText("Approved as is")).toBeVisible();
-  await page.goto("/held");
-  await expect(page.getByRole("link", { name: GAPPY.id })).toHaveCount(0);
-  await expect(page.getByRole("link", { name: TO_CORRECT.id })).toBeVisible();
+  await page.goto("/gaps");
+  await expect(page.getByText("No published text has a gap left to review.")).toBeVisible();
 });
 
 test("an approval without a reason is refused beside its form", async ({ page }) => {

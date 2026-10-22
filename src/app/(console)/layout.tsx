@@ -3,6 +3,7 @@ import { Suspense } from "react";
 
 import { CuratorMenu } from "@/components/curator-menu";
 import { NavLinks, NavList } from "@/components/nav-links";
+import { LINK } from "@/components/styles";
 import { Wordmark } from "@/components/wordmark";
 
 // The console's frame. It prerenders: only the curator's name waits for the request (behind its boundary).
@@ -37,6 +38,13 @@ export default function ConsoleLayout({ children }: LayoutProps<"/">) {
             <Wordmark />
           </span>
           <p>The team’s console for reviewing and correcting the legal knowledge base.</p>
+          <p>
+            Text extraction by{" "}
+            <a href="https://github.com/opendatalab/MinerU" target="_blank" rel="noopener" className={LINK}>
+              MinerU
+            </a>
+            .
+          </p>
         </div>
       </footer>
     </div>

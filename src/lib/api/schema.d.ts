@@ -303,6 +303,23 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/gaps": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Gaps */
+        get: operations["gaps_api_v1_gaps_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/held": {
         parameters: {
             query?: never;
@@ -635,6 +652,11 @@ export interface components {
                 string,
                 number
             ][];
+            /**
+             * Gaps
+             * @default 0
+             */
+            gaps: number;
             /** Health Status */
             health_status: string | null;
             /** Health Taken At */
@@ -808,6 +830,29 @@ export interface components {
             /** Registry */
             registry: unknown;
         };
+        /** GapPage */
+        GapPage: {
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Rows */
+            rows: components["schemas"]["GapRow"][];
+            /** Total */
+            total: number;
+        };
+        /**
+         * GapRow
+         * @description A published document whose main text has gaps in its numbering, left to review (domain/publishing.py).
+         */
+        GapRow: {
+            /** Document Id */
+            document_id: string;
+            /** Notes */
+            notes: components["schemas"]["ReviewNote"][];
+            /** Title */
+            title: string;
+        };
         /** HTTPValidationError */
         HTTPValidationError: {
             /** Detail */
@@ -949,9 +994,16 @@ export interface components {
              */
             reason: string;
         };
+        /** PageStart */
+        PageStart: {
+            /** At */
+            at: number;
+            /** Page */
+            page: number;
+        };
         /**
          * PassageReference
-         * @description A reference in a passage to another provision of the same text ("Pasal 19 ayat (2)").
+         * @description A reference in a block to another provision of the same text ("Pasal 19 ayat (2)").
          */
         PassageReference: {
             /** Address */
@@ -1005,12 +1057,23 @@ export interface components {
             /** Sha256 */
             sha256: string;
         };
-        /** ReadingPassage */
-        ReadingPassage: {
-            /** Address */
-            address: string | null;
-            /** Opens */
-            opens: boolean;
+        /**
+         * ReadingBlock
+         * @description A paragraph or a list item of a passage, its printed lines joined (domain/layout.py).
+         */
+        ReadingBlock: {
+            /**
+             * Depth
+             * @default 0
+             */
+            depth: number;
+            /** Marker */
+            marker?: string | null;
+            /**
+             * Pages
+             * @default []
+             */
+            pages: components["schemas"]["PageStart"][];
             /**
              * References
              * @default []
@@ -1018,6 +1081,18 @@ export interface components {
             references: components["schemas"]["PassageReference"][];
             /** Text */
             text: string;
+        };
+        /** ReadingPassage */
+        ReadingPassage: {
+            /** Address */
+            address: string | null;
+            /**
+             * Blocks
+             * @default []
+             */
+            blocks: components["schemas"]["ReadingBlock"][];
+            /** Opens */
+            opens: boolean;
             /** Titled */
             titled: boolean;
         };
@@ -1067,6 +1142,17 @@ export interface components {
             reason: string;
             /** State */
             state: string;
+        };
+        /**
+         * ReviewNote
+         * @description A structure warning published with the document, for review: on the provision it names, or on the document
+         *     when it names none. The document is published all the same (domain/gate.py).
+         */
+        ReviewNote: {
+            /** Address */
+            address: string | null;
+            /** Note */
+            note: string;
         };
         /** ReviewPage */
         ReviewPage: {
@@ -1996,6 +2082,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["TextToEdit"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    gaps_api_v1_gaps_get: {
+        parameters: {
+            query?: {
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["GapPage"];
                 };
             };
             /** @description Validation Error */

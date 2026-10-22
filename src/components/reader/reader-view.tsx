@@ -1,21 +1,22 @@
 import Link from "next/link";
-import type { ReactNode } from "react";
 
-import type { Passage, ReadingProvision, TextReading } from "@/lib/api/types";
-import { formatCount, formatDay } from "@/lib/format";
+import type { Passage, ReadingProvision } from "@/lib/api/types";
+import { formatCount, formatDay, formatFirst } from "@/lib/format";
 import { sentence } from "@/lib/labels";
 import { addressLabel, changeLabel } from "@/lib/legal";
-import { articleGaps, formalCitation, linkedPieces, outline, type Piece, pieces } from "@/lib/reading";
+import { articleGaps, followsSibling, formalCitation, outline } from "@/lib/reading";
 import { contentHref, documentHref, editHref, readerHref, textHref } from "@/lib/routes";
 
 import { button, CARD, LINK, notice } from "../styles";
 import { CopyActions } from "./copy-actions";
+import { PageLink, PDF_FRAME, type Place, provisionHref } from "./links";
+import { OutlineSpy } from "./outline-spy";
+import { Wording } from "./wording";
 
-const PDF_FRAME = "pdf-view"; // the inline PDF's frame: page links open in it
+const PROBLEMS_SHOWN = 3; // the rest are marked where they are, and listed on the Gaps page
 const GROUPS = new Set(["bab", "bagian", "paragraf", "lampiran", "penjelasan", "memutuskan"]); // centred, as printed
-const WITHOUT_ACTIONS = new Set(["ayat", "bab", "bagian", "paragraf", "memutuskan", "penjelasan"]);
-
-type Place = { reading: TextReading; pdfBeside: boolean; partOf?: Map<string, number> };
+const WITHOUT_ACTIONS = new Set(["ayat", "huruf", "angka", "bab", "bagian", "paragraf", "memutuskan", "penjelasan"]);
+const TITLED_IN_OUTLINE = new Set(["bab", "bagian", "paragraf", "lampiran", "romawi", "diktum"]); // title below
 
 // A text as the parser cut it: the outline beside it, each article in full with its actions, what later documents
 // changed in it, where the parser found a gap, and the official PDF beside it on wide screens.
@@ -24,6 +25,16 @@ export function ReaderView({ reading, pdfBeside }: Place) {
   const gaps = articleGaps(reading.provisions);
   const beside = pdfBeside && reading.pdf_sha256 !== null;
   const place = { reading, pdfBeside: beside, partOf: new Map(reading.provisions.map((p) => [p.address, p.part])) };
+  const passages = reading.passages.map((passage, index) => (
+    <PassageBlock
+      key={`${passage.address}:${index}`}
+      passage={passage}
+      provision={passage.address ? byAddress.get(passage.address) : undefined}
+      missing={passage.opens && passage.address ? gaps.get(passage.address) : undefined}
+      ruled={passage.opens && followsSibling(reading.passages, index, byAddress)}
+      place={place}
+    />
+  ));
   return (
     <div className="grid gap-6">
       <ReaderHead reading={reading} pdfBeside={beside} gapCount={gaps.size} />
@@ -33,16 +44,12 @@ export function ReaderView({ reading, pdfBeside }: Place) {
       >
         <Outline place={place} gaps={gaps} />
         <CopyActions>
-          <article aria-label="Text" className="grid max-w-[75ch] gap-5 text-base leading-relaxed">
-            {reading.passages.map((passage, index) => (
-              <PassageBlock
-                key={`${passage.address}:${index}`}
-                passage={passage}
-                provision={passage.address ? byAddress.get(passage.address) : undefined}
-                missing={passage.opens && passage.address ? gaps.get(passage.address) : undefined}
-                place={place}
-              />
-            ))}
+          <article
+            aria-label="Text"
+            data-reading
+            className="grid max-w-[72ch] gap-6 text-[1.0625rem] leading-[1.8] [overflow-wrap:anywhere]"
+          >
+            {passages}
           </article>
         </CopyActions>
         {beside ? (
@@ -57,6 +64,7 @@ export function ReaderView({ reading, pdfBeside }: Place) {
         ) : null}
       </div>
       <PartNav reading={reading} pdfBeside={beside} />
+      <OutlineSpy />
     </div>
   );
 }
@@ -118,7 +126,7 @@ function ReaderHead({ reading, pdfBeside, gapCount }: Place & { gapCount: number
             <strong className="font-semibold text-warning">The parser found problems in this text.</strong> Gaps in the
             article numbering are marked where they are.
           </p>
-          {reading.problems.length ? <p>{reading.problems.join("; ")}</p> : null}
+          {reading.problems.length ? <p>{formatFirst(reading.problems, PROBLEMS_SHOWN)}</p> : null}
         </div>
       ) : null}
     </header>
@@ -149,7 +157,8 @@ function PartNav({ reading, pdfBeside }: Place) {
   );
 }
 
-// The outline: every part a curator jumps to. On wide screens it stays beside the text; on phones it folds away.
+// The outline: every part a curator jumps to, a chapter's title under its number. On wide screens it stays beside
+// the text, the part being read marked (OutlineSpy); on phones it folds away.
 function Outline({ place, gaps }: { place: Place; gaps: Map<string, string[]> }) {
   const rows = outline(place.reading.provisions);
   const list = (
@@ -157,22 +166,27 @@ function Outline({ place, gaps }: { place: Place; gaps: Map<string, string[]> })
       {rows.map((row) => (
         <li
           key={row.address}
-          style={{ paddingLeft: `${0.5 + row.depth * 0.75}rem` }}
+          style={{ paddingLeft: `${0.25 + row.depth * 0.75}rem` }}
           className="[content-visibility:auto] [contain-intrinsic-size:auto_2rem]"
         >
           {gaps.has(row.address) ? (
-            <span className="block py-0.5 pr-2 text-xs text-warning">{gaps.get(row.address)!.join(", ")} not found</span>
+            <span className="block py-0.5 pr-2 pl-3 text-xs text-warning">{gaps.get(row.address)!.join(", ")} not found</span>
           ) : null}
           <a
             href={provisionHref(row.address, place)}
-            className="flex min-h-8 items-baseline gap-1.5 rounded-ui py-1 pr-2 text-muted transition-colors hover:bg-sunken hover:text-text"
+            className="grid min-h-8 gap-0.5 rounded-r-ui border-l-2 border-transparent py-1 pr-2 pl-2.5 text-muted transition-colors hover:bg-sunken hover:text-text aria-[current=location]:border-accent aria-[current=location]:bg-accent-soft aria-[current=location]:text-text"
           >
-            <span className="shrink-0 font-medium text-text">{row.label}</span>
-            {row.heading ? <span className="truncate">{row.heading}</span> : null}
-            {row.changes.length || row.valid_to ? (
-              <span className="ml-auto shrink-0 text-xs text-warning" title="Changed by a later document">
-                Diubah
-              </span>
+            <span className="flex items-baseline gap-1.5">
+              <span className="font-medium text-text">{row.label}</span>
+              {row.heading && !TITLED_IN_OUTLINE.has(row.kind) ? <span className="truncate">{row.heading}</span> : null}
+              {row.changes.length || row.valid_to ? (
+                <span className="ml-auto shrink-0 text-xs text-warning" title="Changed by a later document">
+                  Diubah
+                </span>
+              ) : null}
+            </span>
+            {row.heading && TITLED_IN_OUTLINE.has(row.kind) ? (
+              <span className="line-clamp-2 text-xs tracking-wide">{row.heading}</span>
             ) : null}
           </a>
         </li>
@@ -184,13 +198,14 @@ function Outline({ place, gaps }: { place: Place; gaps: Map<string, string[]> })
     <>
       <details className={`${CARD} lg:hidden`}>
         <summary className="min-h-10 cursor-pointer px-4 py-2.5 text-sm font-medium">{label}</summary>
-        <nav aria-label="Outline" className="max-h-[60vh] overflow-y-auto border-t border-line py-2">
+        <nav aria-label="Outline" data-outline className="max-h-[60vh] overflow-y-auto overscroll-contain border-t border-line py-2">
           {list}
         </nav>
       </details>
       <nav
         aria-label="Outline"
-        className="hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto"
+        data-outline
+        className="hidden lg:sticky lg:top-24 lg:block lg:max-h-[calc(100dvh-7rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain"
       >
         <p className="mb-2 px-2 text-sm font-semibold">{label}</p>
         {list}
@@ -203,14 +218,16 @@ function PassageBlock({
   passage,
   provision,
   missing,
+  ruled,
   place,
 }: {
   passage: Passage;
   provision: ReadingProvision | undefined;
   missing: string[] | undefined;
+  ruled: boolean;
   place: Place;
 }) {
-  const wording = passage.text.trim() ? <Wording passage={passage} place={place} /> : null;
+  const wording = passage.blocks.length ? <Wording passage={passage} place={place} /> : null;
   if (!passage.opens || !provision) {
     return wording ? <div className={passage.address ? "" : "text-muted"}>{wording}</div> : null;
   }
@@ -225,9 +242,11 @@ function PassageBlock({
       <section
         id={provision.address}
         aria-label={addressLabel(provision.address)}
-        className={`grid scroll-mt-28 gap-2 [content-visibility:auto] [contain-intrinsic-size:auto_8rem] ${group ? "pt-4 text-center" : ""}`}
+        className={`grid scroll-mt-4 gap-3 [content-visibility:auto] [contain-intrinsic-size:auto_8rem] ${group ? "pt-6 pb-2 text-center" : ""} ${ruled ? "border-t border-dashed border-line-strong pt-5" : ""}`}
       >
-        {passage.titled ? <Heading provision={provision} group={group} place={place} /> : null}
+        {passage.titled ? (
+          <Heading provision={provision} group={group} place={place} titleInText={titleInText(passage, provision)} />
+        ) : null}
         {!passage.titled && !WITHOUT_ACTIONS.has(provision.kind) ? <Actions provision={provision} place={place} /> : null}
         <Changes provision={provision} />
         {wording}
@@ -236,21 +255,40 @@ function PassageBlock({
   );
 }
 
-function Heading({ provision, group, place }: { provision: ReadingProvision; group: boolean; place: Place }) {
+// The parser may name a provision by its first words (a fatwa's "Kedua : Fatwa ini berlaku …"): then the heading is
+// its label alone, and the words are read once, in the text.
+function titleInText(passage: Passage, provision: ReadingProvision): boolean {
+  return Boolean(provision.heading && passage.blocks[0]?.text.startsWith(provision.heading));
+}
+
+function Heading({
+  provision,
+  group,
+  place,
+  titleInText,
+}: {
+  provision: ReadingProvision;
+  group: boolean;
+  place: Place;
+  titleInText: boolean;
+}) {
   const Level = `h${Math.min(2 + provision.depth, 6)}` as "h2";
+  const heading = titleInText ? null : provision.heading;
   if (group) {
     return (
-      <Level className="grid gap-0.5 font-semibold tracking-wide">
-        <span>{provision.label}</span>{" "}
-        {provision.heading ? <span className="font-normal text-muted">{provision.heading}</span> : null}
+      <Level className="grid gap-1 text-balance">
+        <span className="font-heading text-3xl leading-tight">{provision.label}</span>{" "}
+        {heading ? (
+          <span className="font-sans text-base font-medium tracking-wide text-muted uppercase">{heading}</span>
+        ) : null}
       </Level>
     );
   }
   return (
     <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-      <Level className="text-lg font-semibold">
+      <Level className="text-xl font-semibold">
         {provision.label}
-        {provision.heading ? <span className="font-normal text-muted"> {provision.heading}</span> : null}
+        {heading ? <span className="font-normal text-muted"> {heading}</span> : null}
       </Level>
       {WITHOUT_ACTIONS.has(provision.kind) ? null : <Actions provision={provision} place={place} />}
     </div>
@@ -259,7 +297,8 @@ function Heading({ provision, group, place }: { provision: ReadingProvision; gro
 
 const ACTION = "inline-flex min-h-8 items-center rounded-ui px-2 text-xs text-muted transition-colors hover:bg-sunken hover:text-text";
 
-function Actions({ provision, place: { reading, pdfBeside } }: { provision: ReadingProvision; place: Place }) {
+function Actions({ provision, place }: { provision: ReadingProvision; place: Place }) {
+  const { reading } = place;
   const name = addressLabel(provision.address);
   const link = readerHref(reading.document_id, { text: reading.sha256, at: provision.address });
   return (
@@ -276,7 +315,7 @@ function Actions({ provision, place: { reading, pdfBeside } }: { provision: Read
         Copy Citation
       </button>
       {reading.pdf_sha256 && provision.page_start ? (
-        <PageLink reading={reading} page={provision.page_start} pdfBeside={pdfBeside} className={ACTION} />
+        <PageLink place={place} page={provision.page_start} className={ACTION} />
       ) : null}
       {reading.editable ? (
         <Link href={editHref(reading.document_id, reading.sha256, [provision.edit_from, provision.edit_to])} className={ACTION}>
@@ -287,105 +326,43 @@ function Actions({ provision, place: { reading, pdfBeside } }: { provision: Read
   );
 }
 
-function PageLink({
-  reading,
-  page,
-  pdfBeside,
-  className,
-  children,
-}: {
-  reading: TextReading;
-  page: number;
-  pdfBeside: boolean;
-  className: string;
-  children?: ReactNode;
-}) {
-  return (
-    <a
-      href={`${contentHref(reading.document_id, reading.pdf_sha256!)}#page=${page}`}
-      target={pdfBeside ? PDF_FRAME : "_blank"}
-      rel="noopener"
-      className={className}
-    >
-      {children ?? `Page ${page}`}
-      {pdfBeside ? null : <span className="sr-only"> (new tab)</span>}
-    </a>
-  );
-}
-
 // What later documents did to this provision: who changed or revoked it, from when, and where its new wording is.
 function Changes({ provision }: { provision: ReadingProvision }) {
   if (!provision.changes.length && !provision.valid_to) {
     return null;
   }
   return (
-    <ul className="grid gap-1 text-left text-sm">
+    <ul className="flex flex-wrap gap-2 text-left text-sm">
       {provision.changes.length ? (
         provision.changes.map((change) => (
-          <li key={`${change.type}:${change.document_id}`} className={`${notice("warning")} py-2`}>
-            {changeLabel(change.type)}{" "}
-            <Link href={documentHref(change.document_id)} className={`${LINK} font-medium`}>
-              {change.citation ?? change.document_id}
-            </Link>
-            {change.effective_on ? `, effective ${formatDay(change.effective_on)}` : ""}
-            {change.new_address ? (
-              <>
-                {". "}
-                <Link href={readerHref(change.document_id, { at: change.new_address })} className={LINK}>
-                  Read the new wording: {addressLabel(change.new_address)}
-                </Link>
-              </>
-            ) : null}
+          <li key={`${change.type}:${change.document_id}`} className={PILL}>
+            <span aria-hidden className={DOT} />
+            <span>
+              {changeLabel(change.type)}{" "}
+              <Link href={documentHref(change.document_id)} className="font-medium underline-offset-4 hover:underline">
+                {change.citation ?? change.document_id}
+              </Link>
+              {change.effective_on ? `, effective ${formatDay(change.effective_on)}` : ""}
+              {change.new_address ? (
+                <>
+                  {". "}
+                  <Link href={readerHref(change.document_id, { at: change.new_address })} className={LINK}>
+                    Read the new wording: {addressLabel(change.new_address)}
+                  </Link>
+                </>
+              ) : null}
+            </span>
           </li>
         ))
       ) : (
-        <li className={`${notice("warning")} py-2`}>Diubah, effective {formatDay(provision.valid_to!)}</li>
+        <li className={PILL}>
+          <span aria-hidden className={DOT} />
+          <span>Diubah, effective {formatDay(provision.valid_to!)}</span>
+        </li>
       )}
     </ul>
   );
 }
 
-// A passage's wording as the source writes it, line for line, with where each page of the official file starts.
-function Wording({ passage, place }: { passage: Passage; place: Place }) {
-  const { reading, pdfBeside } = place;
-  const segments: (Piece | { link: string; text: string })[] = linkedPieces(passage.text, passage.references).flatMap((piece) =>
-    piece.address ? [{ link: piece.address, text: piece.text }] : pieces(piece.text),
-  );
-  return (
-    <div className="whitespace-pre-wrap break-words text-left">
-      {segments.map((segment, index) => {
-        if ("page" in segment) {
-          return (
-            <span key={index} role="separator" className="my-2 flex items-center gap-3 text-xs text-muted">
-              <span aria-hidden className="h-px flex-1 bg-line" />
-              {reading.pdf_sha256 ? (
-                <PageLink reading={reading} page={segment.page} pdfBeside={pdfBeside} className={`${LINK} text-xs`} />
-              ) : (
-                `Page ${segment.page}`
-              )}
-              <span aria-hidden className="h-px flex-1 bg-line" />
-            </span>
-          );
-        }
-        if ("link" in segment) {
-          return (
-            <a key={index} href={provisionHref(segment.link, place)} className={`${LINK} underline decoration-accent/30`}>
-              {segment.text}
-            </a>
-          );
-        }
-        const afterPage = index > 0 && "page" in segments[index - 1];
-        return <span key={index}>{afterPage ? segment.text.replace(/^\n/, "") : segment.text}</span>;
-      })}
-    </div>
-  );
-}
-
-// Where a provision of this text is: on this page, or in another part of it.
-function provisionHref(address: string, { reading, pdfBeside, partOf }: Place): string {
-  const part = partOf?.get(address) ?? reading.part;
-  if (part === reading.part) {
-    return `#${address}`;
-  }
-  return `${readerHref(reading.document_id, { text: reading.sha256, part, pdf: pdfBeside })}#${address}`;
-}
+const PILL = "inline-flex items-baseline gap-2 rounded-2xl border border-warning/40 bg-warning-soft px-3 py-1 text-text";
+const DOT = "size-1.5 shrink-0 -translate-y-0.5 rounded-full bg-warning";

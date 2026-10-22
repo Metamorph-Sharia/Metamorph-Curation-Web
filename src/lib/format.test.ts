@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { formatCount, formatDay, formatMoment, formatValue } from "./format";
+import { formatCount, formatDay, formatFirst, formatMoment, formatValue } from "./format";
 
 describe("dates and counts, written so they can't be misread", () => {
   it("writes a day out, so 05/06 never reads as two different dates", () => {
@@ -29,5 +29,14 @@ describe("a field's value, as the console shows it", () => {
     expect(formatValue("2019-02-27")).toBe("27 Feb 2019");
     expect(formatValue("in_force")).toBe("in_force");
     expect(formatValue(2019)).toBe("2019");
+  });
+});
+
+describe("a long list, shortened", () => {
+  it("names the first few and counts the rest", () => {
+    expect(formatFirst(["Pasal 3 missing", "Pasal 5 missing", "Pasal 9 missing", "Pasal 12 missing"], 3)).toBe(
+      "Pasal 3 missing; Pasal 5 missing; Pasal 9 missing; and 1 more",
+    );
+    expect(formatFirst(["Pasal 3 missing"], 3)).toBe("Pasal 3 missing");
   });
 });

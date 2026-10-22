@@ -14,6 +14,11 @@ test("a curator who isn't signed in signs in and lands on the overview", async (
   await expect(page.getByRole("heading", { level: 1, name: "Overview" })).toBeVisible();
   await expect(page.getByRole("region", { name: "Held Back from Publishing" })).toBeVisible();
   await expect(page.getByText(CURATOR.name)).toBeVisible();
+  // MinerU's license: a service that uses it says so, visibly.
+  await expect(page.getByRole("contentinfo").getByRole("link", { name: "MinerU" })).toHaveAttribute(
+    "href",
+    "https://github.com/opendatalab/MinerU",
+  );
 });
 
 test("a wrong password is refused beside the form, keeping the username", async ({ page }) => {

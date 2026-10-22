@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-import { AMENDING, freshWorld, GAPPY, PUBLISHED, signedIn } from "./world";
+import { AMENDING, freshWorld, PUBLISHED, signedIn, TO_CORRECT } from "./world";
 
 test.beforeAll(freshWorld);
 
@@ -30,7 +30,7 @@ test("filters narrow the documents, count each value, and come off one by one", 
 
   await expect(page).toHaveURL("/documents?state=held");
   const listed = page.getByRole("list", { name: "Matching documents" });
-  await expect(listed.getByRole("link", { name: GAPPY.citation })).toBeVisible();
+  await expect(listed.getByRole("link", { name: TO_CORRECT.citation })).toBeVisible();
   await expect(listed.getByRole("link", { name: PUBLISHED.citation })).toHaveCount(0);
 
   await page.getByRole("link", { name: /Publishing: Held/ }).click();

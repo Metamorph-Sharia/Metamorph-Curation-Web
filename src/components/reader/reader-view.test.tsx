@@ -17,14 +17,37 @@ describe("the reader", () => {
 
     expect(screen.getByRole("heading", { name: "BAB I KETENTUAN UMUM" })).toBeTruthy();
     expect(article("Pasal 1").getByRole("heading", { name: "Pasal 1" })).toBeTruthy();
-    expect(article("Pasal 1").getByText("Satu.")).toBeTruthy();
-    expect(article("Pasal 3").getByText(/^Tiga, menurut/)).toBeTruthy();
+    expect(article("Pasal 1").getByText(/^Satu dan/)).toBeTruthy();
+    expect(article("Pasal 3 ayat (1)").getByText(/^Tiga, menurut/)).toBeTruthy();
+  });
+
+  it("lays a paragraph out as printed: its number hanging, nested items under it, a page start where it falls", () => {
+    render(<ReaderView reading={READING} pdfBeside={false} />);
+
+    const first = article("Pasal 3 ayat (1)");
+    expect(first.getByText("(1)")).toBeTruthy();
+    expect(first.getByText("a.").closest("[data-depth]")?.getAttribute("data-depth")).toBe("1");
+    expect(article("Pasal 3 ayat (2)").getByText("Lain.")).toBeTruthy();
+    const wording = article("Pasal 1").getByText(/^Satu dan/);
+    expect(wording.textContent).toBe("Satu dan Page 2 (new tab)lanjutan."); // "(new tab)": for screen readers
+    expect(within(wording).getByRole("link", { name: /Page 2/ }).getAttribute("href")).toBe(`${PDF}#page=2`);
+  });
+
+  it("names a provision by its label alone when its title is its first words, read once in the text", () => {
+    const ruling = {
+      ...READING,
+      provisions: [{ ...READING.provisions[1], heading: "Satu dan" }],
+      passages: [READING.passages[2]],
+    };
+    render(<ReaderView reading={ruling} pdfBeside={false} />);
+
+    expect(article("Pasal 1").getByRole("heading").textContent).toBe("Pasal 1");
   });
 
   it("links a reference to another article of the text, on this page or in its part", () => {
     render(<ReaderView reading={READING} pdfBeside={false} />);
 
-    const third = article("Pasal 3");
+    const third = article("Pasal 3 ayat (1)");
     expect(third.getByRole("link", { name: "Pasal 1" }).getAttribute("href")).toBe("#pasal-1");
     expect(third.getByRole("link", { name: "Pasal 4" }).getAttribute("href")).toMatch(/read\?text=a+&part=1#pasal-4$/);
   });
@@ -35,6 +58,13 @@ describe("the reader", () => {
     expect(screen.getByText(/Not in the text: Pasal 2/)).toBeTruthy();
     expect(screen.getAllByText("Pasal 2 not found").length).toBeGreaterThan(0);
     expect(screen.getByText("Pasal 2 missing")).toBeTruthy();
+  });
+
+  it("names a text's first problems and counts the rest, which are marked where they are", () => {
+    const problems = Array.from({ length: 70 }, (_, n) => `Pasal ${n + 2} missing`);
+    render(<ReaderView reading={{ ...READING, problems }} pdfBeside={false} />);
+
+    expect(screen.getByText("Pasal 2 missing; Pasal 3 missing; Pasal 4 missing; and 67 more")).toBeTruthy();
   });
 
   it("says what changed an article, and links to its new wording", () => {
