@@ -19,7 +19,8 @@ CLEAN = ("<!-- page 1 -->\nPERATURAN OTORITAS JASA KEUANGAN\nNOMOR 35/POJK.05/20
          "Mengingat : Keputusan Presiden Nomor 84/P;\nMEMUTUSKAN:\nPasal 1\nSatu.\n<!-- page 2 -->\nPasal 2\n"
          "Dua, sebagaimana dimaksud dalam Pasal 1.\n")
 GAPPY = "PERATURAN OTORITAS JASA KEUANGAN\nNOMOR 10/POJK.05/2019\nMEMUTUSKAN:\nPasal 1\nSatu.\nPasal 3\nTiga.\n"
-TO_CORRECT = "PERATURAN OTORITAS JASA KEUANGAN\nNOMOR 7/POJK.05/2020\nMEMUTUSKAN:\nPasal 1\nSatu.\nPasal 3\nTiga.\n"
+# No article found (its heading lost): material, so held until a curator corrects the text. A gap (GAPPY) is published.
+TO_CORRECT = "PERATURAN OTORITAS JASA KEUANGAN\nNOMOR 7/POJK.05/2020\nMEMUTUSKAN:\nSatu.\n"
 AMENDING = """PERATURAN OTORITAS JASA KEUANGAN
 NOMOR 2/POJK.05/2021
 MEMUTUSKAN:

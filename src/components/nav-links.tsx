@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 const PAGES = [
   { href: "/", label: "Overview" },
   { href: "/held", label: "Held" },
+  { href: "/gaps", label: "Gaps" },
   { href: "/review", label: "Review" },
   { href: "/documents", label: "Documents" },
   { href: "/browse", label: "Browse" },

@@ -5,16 +5,14 @@ import { documentPath, freshWorld, PUBLISHED, signedIn, TO_CORRECT, UNIDENTIFIED
 test.beforeAll(freshWorld);
 test.beforeEach(async ({ page }) => signedIn(page));
 
-test("a curator types a missing article into the text, and the document passes and is published", async ({ page }) => {
+test("a curator types a lost article heading into the text, and the document passes and is published", async ({ page }) => {
   await page.goto(documentPath(TO_CORRECT.id));
   await page.getByRole("region", { name: "Files & Texts" }).getByRole("link", { name: "Edit Text" }).click();
   await expect(page.getByRole("heading", { level: 1, name: "Correct the Text" })).toBeVisible();
 
-  await page.locator(".cm-line", { hasText: "Pasal 3" }).click();
+  await page.locator(".cm-line", { hasText: "Satu." }).click();
   await page.keyboard.press("Home");
-  await page.keyboard.type("Pasal 2");
-  await page.keyboard.press("Enter");
-  await page.keyboard.type("Dua.");
+  await page.keyboard.type("Pasal 1");
   await page.keyboard.press("Enter");
   await page.getByRole("textbox", { name: "Reason" }).fill("PDF resmi, halaman 2");
   await page.getByRole("button", { name: "Save Correction" }).click();
@@ -24,7 +22,7 @@ test("a curator types a missing article into the text, and the document passes a
   await expect(page.getByRole("main").locator("header").getByText("Published", { exact: true })).toBeVisible();
 
   await page.getByRole("link", { name: "See the changes" }).click();
-  await expect(page.getByLabel("Changes")).toContainText("+Pasal 2");
+  await expect(page.getByLabel("Changes")).toContainText("+Pasal 1");
 });
 
 test("a text correction is withdrawn, and the source's text is back", async ({ page }) => {
@@ -35,7 +33,7 @@ test("a text correction is withdrawn, and the source's text is back", async ({ p
   await content.getByRole("button", { name: "Withdraw Correction" }).click();
 
   await expect(page.getByRole("status").filter({ hasText: "Correction withdrawn" })).toBeVisible();
-  await expect(page.getByRole("status", { name: "Publishing" })).toContainText("Structure: Pasal 2 missing");
+  await expect(page.getByRole("status", { name: "Publishing" })).toContainText("Structure: no Pasal found");
 });
 
 test("a field is corrected, and a value that can't be applied is refused beside the form", async ({ page }) => {

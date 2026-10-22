@@ -12,6 +12,7 @@ import type {
   Curator,
   Dashboard,
   DocumentView,
+  GapPage,
   HeldPage,
   ReviewPage,
   SearchPage,
@@ -40,6 +41,10 @@ export async function overview(): Promise<Dashboard> {
 
 export async function held(check: string | undefined, page: number): Promise<HeldPage> {
   return read<HeldPage>((api) => api.GET("/api/v1/held", { params: { query: { check, page } } }));
+}
+
+export async function gaps(page: number): Promise<GapPage> {
+  return read<GapPage>((api) => api.GET("/api/v1/gaps", { params: { query: { page } } }));
 }
 
 export async function reviews(kind: string, page: number): Promise<ReviewPage> {

@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 # A fresh end-to-end world: the e2e database recreated, the fixture bundle loaded, the registry built (so one
-# document is published, one is held for its structure, one for its identity, and one citation waits for review).
+# documents are published, one with a gap to review; one is held for its structure, one for its identity; and one
+# citation waits for review).
 # Needs the platform repository beside this one (or METAMORPH_PLATFORM), its compose postgres and objectstore, uv.
 set -euo pipefail
 cd "$(dirname "$0")/.."

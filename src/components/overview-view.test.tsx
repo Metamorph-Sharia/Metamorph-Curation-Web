@@ -35,6 +35,7 @@ const DASHBOARD: Dashboard = {
   ],
   held: 95,
   held_published: 4,
+  gaps: 50,
 };
 
 function section(name: string) {
@@ -66,6 +67,9 @@ describe("the overview", () => {
     expect(citations.textContent).toContain("235");
     expect(citations.getAttribute("href")).toBe("/review?kind=unresolved_citation");
     expect(review.getByRole("link", { name: /Conflicts/ }).textContent).toContain("0");
+    const gaps = review.getByRole("link", { name: /Numbering Gaps/ });
+    expect(gaps.textContent).toContain("50");
+    expect(gaps.getAttribute("href")).toBe("/gaps");
   });
 
   it("shows each ingestion check with its severity, and when the check ran", () => {

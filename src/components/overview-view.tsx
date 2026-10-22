@@ -18,7 +18,7 @@ export function OverviewView({ dashboard }: { dashboard: Dashboard }) {
     <div className="grid gap-12">
       <div className="grid gap-12 lg:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <Held held={dashboard.held} stillPublished={dashboard.held_published} />
-        <WaitingForReview queues={dashboard.open_reviews} />
+        <WaitingForReview queues={dashboard.open_reviews} gaps={dashboard.gaps} />
       </div>
       <Health dashboard={dashboard} />
       <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
@@ -51,19 +51,24 @@ function stillPublishedNote(count: number): string {
   return `${formatCount(count)} of them ${verb} an earlier version published, which the assistant sees until they pass again. Work on those first.`;
 }
 
-function WaitingForReview({ queues }: { queues: Dashboard["open_reviews"] }) {
+// Each review queue, and the published documents whose numbering has gaps: what a curator can work through.
+function WaitingForReview({ queues, gaps }: { queues: Dashboard["open_reviews"]; gaps: number }) {
+  const tiles = [
+    ...queues.map(([kind, open]) => ({ href: `/review?kind=${kind}`, label: reviewQueueLabel(kind), count: open })),
+    { href: "/gaps", label: "Numbering Gaps", count: gaps },
+  ];
   return (
     <Section id="review" title="Waiting for Review">
-      <ul className="grid h-full grid-cols-1 gap-3 sm:grid-cols-3">
-        {queues.map(([kind, open]) => (
-          <li key={kind}>
+      <ul className="grid h-full grid-cols-1 gap-3 sm:grid-cols-2">
+        {tiles.map(({ href, label, count }) => (
+          <li key={href}>
             <Link
-              href={`/review?kind=${kind}`}
+              href={href}
               className={`${CARD} group grid h-full content-between gap-6 p-5 transition-colors hover:border-accent/40`}
             >
-              <span className="text-sm text-muted transition-colors group-hover:text-text">{reviewQueueLabel(kind)}</span>
+              <span className="text-sm text-muted transition-colors group-hover:text-text">{label}</span>
               <span className="flex items-baseline justify-between gap-2">
-                <span className="font-heading text-4xl leading-none tabular-nums">{formatCount(open)}</span>
+                <span className="font-heading text-4xl leading-none tabular-nums">{formatCount(count)}</span>
                 <span aria-hidden className="text-accent transition-transform group-hover:translate-x-0.5">
                   →
                 </span>

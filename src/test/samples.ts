@@ -1,5 +1,5 @@
 // Curation data as the API answers it, typed by the contract: what the view tests render.
-import type { DocumentView, HeldPage, ReadingBlock, ReadingProvision, ReviewPage, SearchPage, TextReading } from "@/lib/api/types";
+import type { DocumentView, GapPage, HeldPage, ReadingBlock, ReadingProvision, ReviewPage, SearchPage, TextReading } from "@/lib/api/types";
 
 export const NOW = "2026-10-19T04:36:00+00:00";
 export const DOC = "ojk:pojk:2019:10";
@@ -13,7 +13,7 @@ export const HELD: HeldPage = {
     {
       document_id: DOC,
       title: "Penyelenggaraan Usaha Pembiayaan Syariah",
-      reasons: [{ check: "structure", detail: "Pasal 3 missing" }],
+      reasons: [{ check: "structure", detail: "no Pasal found" }],
       published_at: NOW,
       held_since: "2026-10-18T02:00:00+00:00",
     },
@@ -32,6 +32,22 @@ export const HELD: HeldPage = {
     ["structure", 1],
   ],
   total: 2,
+  page: 1,
+  pages: 1,
+};
+
+export const GAPS: GapPage = {
+  rows: [
+    {
+      document_id: DOC,
+      title: "Penyelenggaraan Usaha Pembiayaan Syariah",
+      notes: [
+        { address: null, note: "Pasal 3 missing" },
+        { address: "pasal-4", note: "pasal-4: ayat (2) missing" },
+      ],
+    },
+  ],
+  total: 1,
   page: 1,
   pages: 1,
 };
