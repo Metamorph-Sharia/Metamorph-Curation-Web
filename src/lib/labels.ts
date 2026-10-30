@@ -59,6 +59,12 @@ const DONE: Record<string, string> = {
   unapproved: "Approval withdrawn. The document is checked again.",
   text_corrected: "Text corrected, parsed again and checked. Published if it passes.",
   text_restored: "Correction withdrawn. The source’s text is back, parsed again and checked.",
+  register_links: "Register links saved and published.",
+  source_saved: "Source saved and published.",
+  industry_saved: "Industry links saved and published to its datasets.",
+  industry_withdrawn: "Industry withdrawn. Its datasets are published without its links.",
+  sector_saved: "Sector saved and published.",
+  sector_withdrawn: "Sector withdrawn.",
 };
 
 export type Tone = "ok" | "warning" | "critical" | "neutral";

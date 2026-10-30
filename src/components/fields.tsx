@@ -103,3 +103,40 @@ export function SelectField({
     </div>
   );
 }
+
+// IDs a curator lists: one per line (commas work too), monospaced, never spell-checked.
+export function IdListField({
+  id,
+  name,
+  label,
+  help,
+  defaultValue,
+  placeholder,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  help?: ReactNode;
+  defaultValue: readonly string[];
+  placeholder?: string;
+}) {
+  return (
+    <div className="grid gap-1.5">
+      <label htmlFor={id} className="text-sm font-medium">
+        {label}
+      </label>
+      <textarea
+        id={id}
+        name={name}
+        rows={Math.max(2, defaultValue.length + 1)}
+        defaultValue={defaultValue.join("\n")}
+        placeholder={placeholder}
+        autoComplete="off"
+        spellCheck={false}
+        autoCapitalize="none"
+        className={`${CONTROL} font-mono`}
+      />
+      {help ? <p className="text-xs text-muted">{help}</p> : null}
+    </div>
+  );
+}

@@ -22,6 +22,18 @@ The console has no data or rules of its own. Everything it shows and every chang
 | **Text correction** `…/texts/{sha}/correction` | Compares a correction with the source's wording, line by line |
 | **Add Document** `/documents/new` | Adds a document no connector holds. Its file goes straight from the browser to the object store |
 
+**The market data layer** has a section of its own, Market (the platform's `docs/market-curation-plan.md`):
+
+| Page | What a curator does there |
+|---|---|
+| **Sources and Links** `/market` | Sees each register and statistics source, and where to download BI's SEKI edition by hand. Keeps the curated links (a register's or an industry's regulations and reports, a source's citation and freshness) and the sectors, each with a reason. A change is published at once, and what it names that isn't published yet is said |
+| **Companies** `/market/companies?q=&register=&status=&business_type=`, `/market/companies/{id}` | Finds companies on OJK's registers; a company's licences, registrations, review notes, and the releases and reports that name it |
+| **Statistics** `/market/datasets?q=&source=&industry=`, `/market/datasets/{id}`, `/market/series/{id}` | Browses the datasets; a dataset's series and links; a series' figures, provisional ones marked |
+| **Reports** `/market/reports`, `/market/reports/{id}` | Reads a report by the passages the assistant cites, with their pages and what each names |
+| **Press Releases** `/market/releases?q=&from=&to=`, `/market/releases/{id}` | Finds OJK's releases by title, number or date, and reads them the same way |
+
+The Overview shows the market's counts beside the registry's; its health checks are in Ingestion Health.
+
 ## How it is built
 
 ```

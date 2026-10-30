@@ -10,3 +10,9 @@ export function pageNumber(query: Query): number {
   const page = Number(param(query, "page") ?? "1");
   return Number.isInteger(page) && page > 0 ? page : 1;
 }
+
+// Every value of a parameter given more than once (`?warning=a&warning=b`).
+export function params(query: Query, name: string): string[] {
+  const value = query[name];
+  return value === undefined ? [] : Array.isArray(value) ? value : [value];
+}

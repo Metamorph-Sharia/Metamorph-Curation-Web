@@ -14,3 +14,11 @@ describe("which page the navigation marks as current", () => {
     expect(isCurrent("/documents", "/documents/new")).toBe(false);
   });
 });
+
+describe("the market's place in the navigation", () => {
+  it("marks Market on its pages and below them", () => {
+    expect(isCurrent("/market", "/market")).toBe(true);
+    expect(isCurrent("/market", "/market/companies/ojk%3Alpbbti%3Akep-1")).toBe(true);
+    expect(isCurrent("/browse", "/market")).toBe(false);
+  });
+});

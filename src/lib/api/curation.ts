@@ -8,12 +8,23 @@ import { sessionToken } from "../session";
 import { curationApi } from "./client";
 import { apiError, type ApiError, UNAVAILABLE } from "./errors";
 import type {
+  CompanyPage,
+  CompanyView,
   CorrectionDiff,
   Curator,
   Dashboard,
+  DatasetPage,
+  DatasetView,
   DocumentView,
   GapPage,
   HeldPage,
+  MarketOverview,
+  MarketSeriesView,
+  MarketSources,
+  ReleasePage,
+  ReleaseView,
+  ReportRow,
+  ReportView,
   ReviewPage,
   SearchPage,
   SeriesPage,
@@ -104,6 +115,69 @@ export async function contentLink(id: string, sha256: string): Promise<string> {
     }),
   );
   return link.url;
+}
+
+// --- the market layer ----------------------------------------------------------------------------------------
+
+export async function marketOverview(): Promise<MarketOverview> {
+  return read<MarketOverview>((api) => api.GET("/api/v1/market/overview"));
+}
+
+// Registers and statistics sources with their curated links, the industries, and the sectors.
+export async function marketSources(): Promise<MarketSources> {
+  return read<MarketSources>((api) => api.GET("/api/v1/market/sources"));
+}
+
+export type CompanyQuery = { q?: string; register?: string; status?: string; business_type?: string; page: number };
+
+export async function companies(query: CompanyQuery): Promise<CompanyPage> {
+  return read<CompanyPage>((api) => api.GET("/api/v1/market/companies", { params: { query } }));
+}
+
+export async function company(id: string): Promise<CompanyView> {
+  return read<CompanyView>((api) =>
+    api.GET("/api/v1/market/companies/{company_id}", { params: { path: { company_id: id } } }),
+  );
+}
+
+export type DatasetQuery = { q?: string; source?: string; industry?: string; page: number };
+
+export async function datasets(query: DatasetQuery): Promise<DatasetPage> {
+  return read<DatasetPage>((api) => api.GET("/api/v1/market/datasets", { params: { query } }));
+}
+
+export async function dataset(id: string, page: number): Promise<DatasetView> {
+  return read<DatasetView>((api) =>
+    api.GET("/api/v1/market/datasets/{dataset_id}", { params: { path: { dataset_id: id }, query: { page } } }),
+  );
+}
+
+export async function marketSeries(id: string): Promise<MarketSeriesView> {
+  return read<MarketSeriesView>((api) =>
+    api.GET("/api/v1/market/series/{series_id}", { params: { path: { series_id: id } } }),
+  );
+}
+
+export async function reports(): Promise<ReportRow[]> {
+  return read<ReportRow[]>((api) => api.GET("/api/v1/market/reports"));
+}
+
+export async function report(id: string, page: number): Promise<ReportView> {
+  return read<ReportView>((api) =>
+    api.GET("/api/v1/market/reports/{report_id}", { params: { path: { report_id: id }, query: { page } } }),
+  );
+}
+
+export type ReleaseQuery = { q?: string; from?: string; to?: string; page: number };
+
+export async function releases(query: ReleaseQuery): Promise<ReleasePage> {
+  return read<ReleasePage>((api) => api.GET("/api/v1/market/releases", { params: { query } }));
+}
+
+export async function release(id: string): Promise<ReleaseView> {
+  return read<ReleaseView>((api) =>
+    api.GET("/api/v1/market/releases/{release_id}", { params: { path: { release_id: id } } }),
+  );
 }
 
 type Answer = { data?: unknown; error?: unknown };

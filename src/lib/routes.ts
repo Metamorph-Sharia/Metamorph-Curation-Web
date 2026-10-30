@@ -40,3 +40,28 @@ export function browseHref(issuer?: string, family?: string, year?: number): str
   }
   return `/browse/${encodeURIComponent(issuer)}/${encodeURIComponent(family)}${year ? `?year=${year}` : ""}`;
 }
+
+// The market layer's records: a company, a dataset (a page of its series), a series, a report, a release.
+function marketHref(kind: string, id: string, page?: number): string {
+  return `/market/${kind}/${encodeURIComponent(id)}${page && page > 1 ? `?page=${page}` : ""}`;
+}
+
+export const companyHref = (id: string) => marketHref("companies", id);
+export const datasetHref = (id: string, page?: number) => marketHref("datasets", id, page);
+export const seriesHref = (id: string) => marketHref("series", id);
+export const reportHref = (id: string, page?: number) => marketHref("reports", id, page);
+export const releaseHref = (id: string) => marketHref("releases", id);
+
+// A market list with its query and filters, as the URL keeps them: empty ones and the first page left out.
+export function marketListHref(
+  list: "companies" | "datasets" | "releases",
+  query: Record<string, string | number | undefined>,
+): string {
+  const search = new URLSearchParams();
+  for (const [name, value] of Object.entries(query)) {
+    if (value !== undefined && value !== "" && !(name === "page" && Number(value) <= 1)) {
+      search.set(name, String(value));
+    }
+  }
+  return `/market/${list}${search.size ? `?${search}` : ""}`;
+}

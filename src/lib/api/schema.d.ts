@@ -337,6 +337,319 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/market/companies": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Companies */
+        get: operations["companies_api_v1_market_companies_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/companies/{company_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Company */
+        get: operations["company_api_v1_market_companies__company_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/datasets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Datasets */
+        get: operations["datasets_api_v1_market_datasets_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/datasets/{dataset_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Dataset
+         * @description A dataset with a page of its series.
+         */
+        get: operations["dataset_api_v1_market_datasets__dataset_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/overview": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Market Overview */
+        get: operations["market_overview_api_v1_market_overview_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/registers/{register_id}/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Register Links
+         * @description Replace a register's curated links; published at once.
+         */
+        put: operations["set_register_links_api_v1_market_registers__register_id__links_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/releases": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Releases
+         * @description Press releases, newest first; `from` and `to` bound their published date.
+         */
+        get: operations["releases_api_v1_market_releases_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/releases/{release_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Release */
+        get: operations["release_api_v1_market_releases__release_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/reports": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Reports */
+        get: operations["reports_api_v1_market_reports_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/reports/{report_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Report
+         * @description A report with a page of its passages, each with what it names.
+         */
+        get: operations["report_api_v1_market_reports__report_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/sectors/{sector_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Sector
+         * @description Add a sector, or replace its names and industries; published at once.
+         */
+        put: operations["set_sector_api_v1_market_sectors__sector_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/sectors/{sector_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Withdraw Sector */
+        post: operations["withdraw_sector_api_v1_market_sectors__sector_id__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/series/{series_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Market Series
+         * @description A series with every observation, oldest first.
+         */
+        get: operations["market_series_api_v1_market_series__series_id__get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/sources": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Market Sources
+         * @description Registers and statistics sources with their curated links, the industries and the sectors.
+         */
+        get: operations["market_sources_api_v1_market_sources_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/sources/{source_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /** Set Source */
+        put: operations["set_source_api_v1_market_sources__source_id__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/sources/{source_id}/industries/{name}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        /**
+         * Set Industry
+         * @description Add an industry as its source names it, or replace its links; published at once.
+         */
+        put: operations["set_industry_api_v1_market_sources__source_id__industries__name__put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/market/sources/{source_id}/industries/{name}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** Withdraw Industry */
+        post: operations["withdraw_industry_api_v1_market_sources__source_id__industries__name__withdraw_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/overview": {
         parameters: {
             query?: never;
@@ -528,6 +841,44 @@ export interface components {
             /** Target Id */
             target_id: string;
         };
+        /** CompanyPage */
+        CompanyPage: {
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Rows */
+            rows: components["schemas"]["CompanyRow"][];
+            /** Total */
+            total: number;
+        };
+        /** CompanyRow */
+        CompanyRow: {
+            /** Business Type */
+            business_type: string | null;
+            /** First Listed */
+            first_listed: string | null;
+            /** Id */
+            id: string;
+            /** Left After */
+            left_after: string | null;
+            /** Legal Name */
+            legal_name: string;
+            /** Register */
+            register: string;
+            /** Status */
+            status: string;
+        };
+        /** CompanyView */
+        CompanyView: {
+            company: components["schemas"]["CompanyRow"];
+            /** Entities */
+            entities: components["schemas"]["EntityRow"][];
+            /** Mentions */
+            mentions: components["schemas"]["MentionRow"][];
+            /** Names */
+            names: string[];
+        };
         /** ConflictDecision */
         ConflictDecision: {
             /** Decision */
@@ -681,6 +1032,66 @@ export interface components {
             /** Recent Bundles */
             recent_bundles: components["schemas"]["BundleRow"][];
         };
+        /** DatasetPage */
+        DatasetPage: {
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Rows */
+            rows: components["schemas"]["DatasetRow"][];
+            /** Total */
+            total: number;
+        };
+        /** DatasetRow */
+        DatasetRow: {
+            /**
+             * First Period
+             * Format: date
+             */
+            first_period: string;
+            /** Group */
+            group: string;
+            /** Id */
+            id: string;
+            /** Industry */
+            industry: string | null;
+            /**
+             * Last Period
+             * Format: date
+             */
+            last_period: string;
+            /** Metric */
+            metric: string;
+            /** Register */
+            register: string | null;
+            /** Series */
+            series: number;
+            /** Source */
+            source: string;
+            /** Updated */
+            updated: string | null;
+        };
+        /** DatasetView */
+        DatasetView: {
+            /** Citation */
+            citation: string | null;
+            dataset: components["schemas"]["DatasetRow"];
+            /** Governed By */
+            governed_by: string[];
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Reports */
+            reports: string[];
+            /** Series */
+            series: components["schemas"]["MarketSeriesRow"][];
+            /** Series Total */
+            series_total: number;
+            /** Url */
+            url: string | null;
+        };
         /** DocumentHit */
         DocumentHit: {
             /** Citation */
@@ -786,6 +1197,33 @@ export interface components {
             sha256: string;
             /** Storage Key */
             storage_key: string;
+        };
+        /** EntityRow */
+        EntityRow: {
+            /** Business Type */
+            business_type: string | null;
+            /** First Listed */
+            first_listed: string | null;
+            /** Id */
+            id: string;
+            /** Kind */
+            kind: string;
+            /** Last Listed */
+            last_listed: string | null;
+            /** Left After */
+            left_after: string | null;
+            /** Legal Name */
+            legal_name: string;
+            /** License Date */
+            license_date: string | null;
+            /** License Number */
+            license_number: string;
+            /** On Newest List */
+            on_newest_list: boolean;
+            /** Review Notes */
+            review_notes: string[];
+            /** Website */
+            website: string | null;
         };
         /** Facet */
         Facet: {
@@ -898,6 +1336,48 @@ export interface components {
             /** Detail */
             detail: string;
         };
+        /** IndustryChange */
+        IndustryChange: {
+            /**
+             * Governed By
+             * @default []
+             */
+            governed_by: string[];
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+            /** Register */
+            register?: string | null;
+            /**
+             * Reports
+             * @default []
+             */
+            reports: string[];
+        };
+        /** IndustryName */
+        IndustryName: {
+            /** Name */
+            name: string;
+            /** Source */
+            source: string;
+        };
+        /** IndustryView */
+        IndustryView: {
+            /** Datasets */
+            datasets: number;
+            /** Governed By */
+            governed_by: string[];
+            /** Name */
+            name: string;
+            /** Register */
+            register: string | null;
+            /** Reports */
+            reports: string[];
+            /** Source */
+            source: string;
+        };
         /** Link */
         Link: {
             /** Url */
@@ -921,6 +1401,112 @@ export interface components {
             to_address: string | null;
             /** Type */
             type: string;
+        };
+        /**
+         * MarketChange
+         * @description A change to the curated links, as published: what it named that is not published, and the sources page.
+         */
+        MarketChange: {
+            sources: components["schemas"]["MarketSources"];
+            /** Warnings */
+            warnings: string[];
+        };
+        /** MarketCounts */
+        MarketCounts: {
+            /** Companies */
+            companies: number;
+            /** Datasets */
+            datasets: number;
+            /** Entities */
+            entities: number;
+            /** Mentions */
+            mentions: number;
+            /** Observations */
+            observations: number;
+            /** Releases */
+            releases: number;
+            /** Reports */
+            reports: number;
+            /** Sectors */
+            sectors: number;
+            /** Series */
+            series: number;
+        };
+        /** MarketOverview */
+        MarketOverview: {
+            /** Checks */
+            checks: components["schemas"]["CheckRow"][];
+            counts: components["schemas"]["MarketCounts"];
+            /** Health Taken At */
+            health_taken_at: string | null;
+            /** Open Reviews */
+            open_reviews: number;
+            /** Recent Bundles */
+            recent_bundles: components["schemas"]["BundleRow"][];
+        };
+        /** MarketSeriesRow */
+        MarketSeriesRow: {
+            /**
+             * First Period
+             * Format: date
+             */
+            first_period: string;
+            /** Frequency */
+            frequency: string;
+            /** Id */
+            id: string;
+            /** Label */
+            label: string;
+            /**
+             * Last Period
+             * Format: date
+             */
+            last_period: string;
+            /** Observations */
+            observations: number;
+            /** Unit */
+            unit: string | null;
+        };
+        /**
+         * MarketSources
+         * @description Everything a curator keeps on the market's sources page: the curated links, and what they reach.
+         */
+        MarketSources: {
+            /** Industries */
+            industries: components["schemas"]["IndustryView"][];
+            /** Named Industries */
+            named_industries: components["schemas"]["IndustryName"][];
+            /** Registers */
+            registers: components["schemas"]["RegisterView"][];
+            /** Sectors */
+            sectors: components["schemas"]["SectorView"][];
+            /** Sources */
+            sources: components["schemas"]["StatisticsSourceView"][];
+        };
+        /**
+         * MentionRow
+         * @description A report or release passage that names a regulation or a company.
+         */
+        MentionRow: {
+            /** Address */
+            address: string;
+            /** Citation */
+            citation: string;
+            /** Document */
+            document: string;
+            /** Kind */
+            kind: string;
+            /** Published On */
+            published_on: string | null;
+            /** Title */
+            title: string;
+        };
+        /** NamedTarget */
+        NamedTarget: {
+            /** Id */
+            id: string;
+            /** Kind */
+            kind: string;
         };
         /**
          * NewDocument
@@ -994,6 +1580,18 @@ export interface components {
              */
             reason: string;
         };
+        /** ObservationRow */
+        ObservationRow: {
+            /**
+             * Period
+             * Format: date
+             */
+            period: string;
+            /** Provisional */
+            provisional: boolean;
+            /** Value */
+            value: number;
+        };
         /** PageStart */
         PageStart: {
             /** At */
@@ -1012,6 +1610,23 @@ export interface components {
             end: number;
             /** Start */
             start: number;
+        };
+        /** PassageRow */
+        PassageRow: {
+            /** Address */
+            address: string;
+            /** Names */
+            names: components["schemas"]["NamedTarget"][];
+            /** Ordinal */
+            ordinal: number;
+            /** Page End */
+            page_end: number | null;
+            /** Page Start */
+            page_start: number | null;
+            /** Text */
+            text: string;
+            /** Words */
+            words: number;
         };
         /**
          * ProvisionChange
@@ -1133,6 +1748,119 @@ export interface components {
              */
             reason: string;
         };
+        /** RegisterLinksChange */
+        RegisterLinksChange: {
+            /** Fresh Days */
+            fresh_days: number;
+            /**
+             * Governed By
+             * @default []
+             */
+            governed_by: string[];
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+            /**
+             * Reports
+             * @default []
+             */
+            reports: string[];
+        };
+        /** RegisterView */
+        RegisterView: {
+            /** Companies */
+            companies: number;
+            /** Editions */
+            editions: number;
+            /** Fresh Days */
+            fresh_days: number;
+            /** Governed By */
+            governed_by: string[];
+            /** Id */
+            id: string;
+            /** Issuer */
+            issuer: string;
+            /** Name */
+            name: string;
+            /** Newest Edition */
+            newest_edition: string | null;
+            /** Reports */
+            reports: string[];
+        };
+        /** ReleasePage */
+        ReleasePage: {
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Rows */
+            rows: components["schemas"]["ReleaseRow"][];
+            /** Total */
+            total: number;
+        };
+        /** ReleaseRow */
+        ReleaseRow: {
+            /** Id */
+            id: string;
+            /** Number */
+            number: string | null;
+            /** Passages */
+            passages: number;
+            /**
+             * Published On
+             * Format: date
+             */
+            published_on: string;
+            /** Title */
+            title: string;
+        };
+        /** ReleaseView */
+        ReleaseView: {
+            /** Citation */
+            citation: string;
+            /** Passages */
+            passages: components["schemas"]["PassageRow"][];
+            release: components["schemas"]["ReleaseRow"];
+            /** Url */
+            url: string | null;
+        };
+        /** ReportRow */
+        ReportRow: {
+            /** Edition */
+            edition: string;
+            /** Family */
+            family: string;
+            /** Id */
+            id: string;
+            /** Issuer */
+            issuer: string;
+            /** Method */
+            method: string;
+            /** Pages */
+            pages: number;
+            /** Passages */
+            passages: number;
+            /** Published On */
+            published_on: string | null;
+            /** Title */
+            title: string;
+        };
+        /** ReportView */
+        ReportView: {
+            /** Citation */
+            citation: string;
+            /** Page */
+            page: number;
+            /** Pages */
+            pages: number;
+            /** Passages */
+            passages: components["schemas"]["PassageRow"][];
+            report: components["schemas"]["ReportRow"];
+            /** Url */
+            url: string | null;
+        };
         /** ReviewDecision */
         ReviewDecision: {
             /**
@@ -1224,6 +1952,42 @@ export interface components {
             /** Query */
             query: string;
         };
+        /** SectorChange */
+        SectorChange: {
+            /** Industries */
+            industries: components["schemas"]["IndustryName"][];
+            /** Name */
+            name: string;
+            /**
+             * Name En
+             * @default
+             */
+            name_en: string;
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+        };
+        /** SectorView */
+        SectorView: {
+            /** Datasets */
+            datasets: number;
+            /** Governed By */
+            governed_by: string[];
+            /** Id */
+            id: string;
+            /** Industries */
+            industries: components["schemas"]["IndustryName"][];
+            /** Name */
+            name: string;
+            /** Name En */
+            name_en: string;
+            /** Registers */
+            registers: string[];
+            /** Reports */
+            reports: string[];
+        };
         /** SeriesPage */
         SeriesPage: {
             /** Documents */
@@ -1256,6 +2020,24 @@ export interface components {
             /** Last Year */
             last_year: number | null;
         };
+        /** SeriesView */
+        SeriesView: {
+            /** Citation */
+            citation: string | null;
+            /** Dataset */
+            dataset: string;
+            /** Dimensions */
+            dimensions: {
+                [key: string]: string;
+            }[];
+            /** Measure */
+            measure: string;
+            /** Observations */
+            observations: components["schemas"]["ObservationRow"][];
+            series: components["schemas"]["MarketSeriesRow"];
+            /** Url */
+            url: string | null;
+        };
         /** Session */
         Session: {
             curator: components["schemas"]["Curator"];
@@ -1274,6 +2056,31 @@ export interface components {
             /** Username */
             username: string;
         };
+        /** SourceChange */
+        SourceChange: {
+            /**
+             * Citation
+             * @default
+             */
+            citation: string;
+            /**
+             * Download Hint
+             * @default
+             */
+            download_hint: string;
+            /**
+             * Download Page
+             * @default
+             */
+            download_page: string;
+            /** Fresh Days */
+            fresh_days: number;
+            /**
+             * Reason
+             * @default
+             */
+            reason: string;
+        };
         /** SourceRow */
         SourceRow: {
             /** Connector */
@@ -1289,6 +2096,29 @@ export interface components {
             source_id: string;
             /** Url */
             url: string;
+        };
+        /** StatisticsSourceView */
+        StatisticsSourceView: {
+            /** Citation */
+            citation: string | null;
+            /** Datasets */
+            datasets: number;
+            /** Download Hint */
+            download_hint: string | null;
+            /** Download Page */
+            download_page: string | null;
+            /** Fresh Days */
+            fresh_days: number;
+            /** Id */
+            id: string;
+            /** Issuer */
+            issuer: string;
+            /** Name */
+            name: string;
+            /** Newest Period */
+            newest_period: string | null;
+            /** Series */
+            series: number;
         };
         /** StatusRow */
         StatusRow: {
@@ -2145,6 +2975,540 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["HeldPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    companies_api_v1_market_companies_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                register?: string;
+                status?: string;
+                business_type?: string;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    company_api_v1_market_companies__company_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                company_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CompanyView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    datasets_api_v1_market_datasets_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                source?: string;
+                industry?: string;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatasetPage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    dataset_api_v1_market_datasets__dataset_id__get: {
+        parameters: {
+            query?: {
+                page?: number;
+            };
+            header?: never;
+            path: {
+                dataset_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["DatasetView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    market_overview_api_v1_market_overview_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketOverview"];
+                };
+            };
+        };
+    };
+    set_register_links_api_v1_market_registers__register_id__links_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                register_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterLinksChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketChange"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    releases_api_v1_market_releases_get: {
+        parameters: {
+            query?: {
+                q?: string;
+                from?: string | null;
+                to?: string | null;
+                page?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleasePage"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    release_api_v1_market_releases__release_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                release_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReleaseView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    reports_api_v1_market_reports_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportRow"][];
+                };
+            };
+        };
+    };
+    report_api_v1_market_reports__report_id__get: {
+        parameters: {
+            query?: {
+                page?: number;
+            };
+            header?: never;
+            path: {
+                report_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReportView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_sector_api_v1_market_sectors__sector_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sector_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SectorChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketChange"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    withdraw_sector_api_v1_market_sectors__sector_id__withdraw_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                sector_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Reason"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketChange"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    market_series_api_v1_market_series__series_id__get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                series_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SeriesView"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    market_sources_api_v1_market_sources_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketSources"];
+                };
+            };
+        };
+    };
+    set_source_api_v1_market_sources__source_id__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SourceChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketChange"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    set_industry_api_v1_market_sources__source_id__industries__name__put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["IndustryChange"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketChange"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    withdraw_industry_api_v1_market_sources__source_id__industries__name__withdraw_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                source_id: string;
+                name: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["Reason"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MarketChange"];
                 };
             };
             /** @description Validation Error */
