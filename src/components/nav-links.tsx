@@ -11,6 +11,7 @@ const PAGES = [
   { href: "/review", label: "Review" },
   { href: "/documents", label: "Documents" },
   { href: "/browse", label: "Browse" },
+  { href: "/retrieval", label: "Retrieval" },
   { href: "/market", label: "Market" },
   { href: "/documents/new", label: "Add Document", action: true },
 ];

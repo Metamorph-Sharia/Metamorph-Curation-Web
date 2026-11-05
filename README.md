@@ -21,6 +21,7 @@ The console has no data or rules of its own. Everything it shows and every chang
 | **Correct the text** `…/texts/{sha}/edit` | Fixes a main text's wording in an editor (CodeMirror) that keeps page markers as they are. Saving parses, checks and publishes at once |
 | **Text correction** `…/texts/{sha}/correction` | Compares a correction with the source's wording, line by line |
 | **Add Document** `/documents/new` | Adds a document no connector holds. Its file goes straight from the browser to the object store |
+| **Retrieval** `/retrieval?tool=&value=` | Asks the retrieval gateway a question and reads what it answers: search by meaning across the regulation and market providers, or one of their exact tools, with each hit's rank, score, how it matched, and the provider and index behind it |
 
 **The market data layer** has a section of its own, Market (the platform's `docs/market-curation-plan.md`):
 
